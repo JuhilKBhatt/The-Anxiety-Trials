@@ -21,11 +21,14 @@ public class PlayerController : MonoBehaviour
     private bool isHurt;
     private bool isDead;
 
+    // ✅ Store the last direction player moved
+    private Vector2 lastMoveDirection = Vector2.down; // Default facing down (you can change this)
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        rb.gravityScale = 0f; // Ensure gravity is disabled for top-down movement
+        rb.gravityScale = 0f; // Top-down: no gravity
     }
 
     private void Update()
@@ -53,6 +56,12 @@ public class PlayerController : MonoBehaviour
 
         moveInput = new Vector2(moveX, moveY).normalized;
         isRunning = Input.GetKey(KeyCode.LeftShift);
+
+        // Only update last direction when moving
+        if (moveInput.sqrMagnitude > 0.01f)
+        {
+            lastMoveDirection = moveInput;
+        }
     }
 
     /// <summary>
@@ -67,10 +76,10 @@ public class PlayerController : MonoBehaviour
         currentVelocity = Vector2.Lerp(rb.linearVelocity, targetVelocity, acceleration * Time.fixedDeltaTime);
         rb.linearVelocity = currentVelocity;
 
-        // ✅ Flip sprite horizontally
-        if (moveInput.x > 0.1f)
+        // Flip sprite horizontally
+        if (lastMoveDirection.x > 0.1f)
             transform.localScale = new Vector3(1, 1, 1);
-        else if (moveInput.x < -0.1f)
+        else if (lastMoveDirection.x < -0.1f)
             transform.localScale = new Vector3(-1, 1, 1);
     }
 
@@ -79,8 +88,11 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void UpdateAnimator()
     {
-        animator.SetFloat("moveX", moveInput.x);
-        animator.SetFloat("moveY", moveInput.y);
+        // Use last move direction if not moving
+        Vector2 animDirection = (moveInput.sqrMagnitude > 0.01f) ? moveInput : lastMoveDirection;
+
+        animator.SetFloat("moveX", animDirection.x);
+        animator.SetFloat("moveY", animDirection.y);
         animator.SetBool("isMoving", moveInput.magnitude > 0.1f);
         animator.SetBool("isRunning", isRunning);
         animator.SetBool("isHurt", isHurt);
