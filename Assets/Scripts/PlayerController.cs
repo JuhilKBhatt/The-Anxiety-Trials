@@ -1,47 +1,108 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Animator))]
 public class PlayerController : MonoBehaviour
 {
-    public float walkSpeed = 3f;
-    public float runSpeed = 6f;
+    [Header("Movement Settings")]
+    [SerializeField] private float walkSpeed = 3f;
+    [SerializeField] private float runSpeed = 6f;
+    [SerializeField] private float acceleration = 10f;
+
+    [Header("State Flags")]
+    [SerializeField] private bool canMove = true;
 
     private Rigidbody2D rb;
-    private Animator anim;
-    private Vector2 input;
+    private Animator animator;
 
-    void Start()
+    private Vector2 moveInput;
+    private Vector2 currentVelocity;
+    private bool isRunning;
+    private bool isHurt;
+    private bool isDead;
+
+    private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();
+        animator = GetComponent<Animator>();
+        rb.gravityScale = 0f; // Ensure gravity is disabled for top-down movement
     }
 
-    void Update()
+    private void Update()
     {
-        // Movement input
-        input.x = Input.GetAxisRaw("Horizontal");
-        input.y = Input.GetAxisRaw("Vertical");
-        input.Normalize();
+        if (isDead) return;
 
-        // Example state conditions (replace with your own gameplay logic)
-        bool isJumping = Input.GetKey(KeyCode.Space);
-        bool isRunning = Input.GetKey(KeyCode.LeftShift);
-        bool isHurt = false; // set from damage system
-        bool isDead = false; // set from health system
-
-        // Animator parameters
-        anim.SetFloat("moveX", input.x);
-        anim.SetFloat("moveY", input.y);
-        anim.SetBool("isMoving", input.magnitude > 0.1f);
-        anim.SetBool("isRunning", isRunning);
-        anim.SetBool("isJumping", isJumping);
-        anim.SetBool("isHurt", isHurt);
-        anim.SetBool("isDead", isDead);
+        HandleInput();
+        UpdateAnimator();
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
-        rb.MovePosition(rb.position + input * currentSpeed * Time.fixedDeltaTime);
+        if (isDead || !canMove) return;
+
+        MovePlayer();
     }
+
+    /// <summary>
+    /// Reads player input and updates movement state.
+    /// </summary>
+    private void HandleInput()
+    {
+        float moveX = Input.GetAxisRaw("Horizontal");
+        float moveY = Input.GetAxisRaw("Vertical");
+
+        moveInput = new Vector2(moveX, moveY).normalized;
+        isRunning = Input.GetKey(KeyCode.LeftShift);
+    }
+
+    /// <summary>
+    /// Smoothly moves the player in 2D space (top-down).
+    /// </summary>
+    private void MovePlayer()
+    {
+        float targetSpeed = isRunning ? runSpeed : walkSpeed;
+        Vector2 targetVelocity = moveInput * targetSpeed;
+
+        // Smooth acceleration / deceleration
+        currentVelocity = Vector2.Lerp(rb.linearVelocity, targetVelocity, acceleration * Time.fixedDeltaTime);
+        rb.linearVelocity = currentVelocity;
+
+        // ✅ Flip sprite horizontally
+        if (moveInput.x > 0.1f)
+            transform.localScale = new Vector3(1, 1, 1);
+        else if (moveInput.x < -0.1f)
+            transform.localScale = new Vector3(-1, 1, 1);
+    }
+
+    /// <summary>
+    /// Updates animation parameters.
+    /// </summary>
+    private void UpdateAnimator()
+    {
+        animator.SetFloat("moveX", moveInput.x);
+        animator.SetFloat("moveY", moveInput.y);
+        animator.SetBool("isMoving", moveInput.magnitude > 0.1f);
+        animator.SetBool("isRunning", isRunning);
+        animator.SetBool("isHurt", isHurt);
+        animator.SetBool("isDead", isDead);
+    }
+
+    #region Public Methods
+
+    public void TakeDamage()
+    {
+        if (isDead) return;
+        isHurt = true;
+        animator.SetTrigger("Hurt");
+    }
+
+    public void Die()
+    {
+        isDead = true;
+        rb.linearVelocity = Vector2.zero;
+        animator.SetTrigger("Death");
+        canMove = false;
+    }
+
+    #endregion
 }
