@@ -3,58 +3,45 @@ using UnityEngine;
 public class SpiritMovement : MonoBehaviour
 {
     [Header("Movement Settings")]
-    [Tooltip("How fast the spirit moves around the circle.")]
     public float speed = 1f;
-
-    [Tooltip("How much randomness to apply to the circular path (0 = perfect circle, 1 = chaotic).")]
-    [Range(0f, 1f)]
-    public float randomness = 0.2f;
-
-    [Tooltip("Radius of the circular motion.")]
+    [Range(0f, 1f)] public float randomness = 0.2f;
     public float radius = 2f;
-
-    [Tooltip("How often (in seconds) the spirit might randomly reverse direction.")]
     public float reverseChanceInterval = 2f;
+    [Range(0f, 1f)] public float reverseChance = 0.3f;
 
-    [Tooltip("Chance (0-1) of reversing direction at each check.")]
-    [Range(0f, 1f)]
-    public float reverseChance = 0.3f;
+    public Transform centerTarget; // The player to orbit
 
     private float angle = 0f;
     private int direction = 1;
     private float nextReverseCheck = 0f;
-    private Vector3 origin;
 
     void Start()
     {
-        // Store original position as the circle center
-        origin = transform.position;
         nextReverseCheck = Time.time + reverseChanceInterval;
     }
 
     void Update()
     {
-        // Randomly decide whether to reverse direction
+        if (centerTarget == null) return;
+
+        // Randomly reverse
         if (Time.time >= nextReverseCheck)
         {
             nextReverseCheck = Time.time + reverseChanceInterval;
             if (Random.value < reverseChance)
-            {
-                direction *= -1; // Reverse!
-            }
+                direction *= -1;
         }
 
-        // Advance the angle
+        // Advance angle
         angle += direction * speed * Time.deltaTime;
 
-        // Add random "noise" to the path
+        // Add random "noise"
         float randomOffset = Mathf.Sin(Time.time * speed * 2f) * randomness;
 
-        // Compute new position
+        // Compute position around the target
         float x = Mathf.Cos(angle + randomOffset) * radius;
         float y = Mathf.Sin(angle - randomOffset) * radius;
 
-        // Apply movement
-        transform.position = origin + new Vector3(x, y, 0f);
+        transform.position = centerTarget.position + new Vector3(x, y, 0f);
     }
 }
