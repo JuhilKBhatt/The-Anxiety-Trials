@@ -55,7 +55,7 @@ public class TorchVision : MonoBehaviour
             float angle = Vector2.Angle(facingDir, dirToTarget);
             if (angle <= coneAngle)
             {
-                Debug.Log($"🔥 Detected [{hit.gameObject.tag}] in torchlight: {hit.gameObject.name}");
+                // Do something with the detected object
             }
         }
     }
