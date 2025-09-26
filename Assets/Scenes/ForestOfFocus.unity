@@ -129,7 +129,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5251428058311805969, guid: 175b18db165ff45be964c98c1cf693c0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.26
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5251428058311805969, guid: 175b18db165ff45be964c98c1cf693c0, type: 3}
       propertyPath: m_LocalPosition.y
@@ -177,10 +177,10 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5971469950088585322, guid: 175b18db165ff45be964c98c1cf693c0, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 108819645}
+      addedObject: {fileID: 108819650}
     - targetCorrespondingSourceObject: {fileID: 5971469950088585322, guid: 175b18db165ff45be964c98c1cf693c0, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 108819650}
+      addedObject: {fileID: 108819645}
   m_SourcePrefab: {fileID: 100100000, guid: 175b18db165ff45be964c98c1cf693c0, type: 3}
 --- !u!1 &108819644 stripped
 GameObject:
@@ -205,6 +205,7 @@ MonoBehaviour:
   detectableTags:
   - Spirit
   - Player
+  TrackMouse: 1
 --- !u!114 &108819650
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -244,9 +245,9 @@ MonoBehaviour:
     m_Center: {x: 0, y: -0.00000011920929, z: 0}
     m_Extent: {x: 0.9985302, y: 0.99853027, z: 0}
   m_PointLightInnerAngle: 0
-  m_PointLightOuterAngle: 50
-  m_PointLightInnerRadius: 2.75
-  m_PointLightOuterRadius: 4
+  m_PointLightOuterAngle: 30
+  m_PointLightInnerRadius: 5
+  m_PointLightOuterRadius: 15
   m_ShapeLightParametricSides: 5
   m_ShapeLightParametricAngleOffset: 0
   m_ShapeLightParametricRadius: 1

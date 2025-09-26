@@ -9,13 +9,10 @@ public class TorchVision : MonoBehaviour
     [SerializeField] private LayerMask detectionMask;
     [SerializeField] private string[] detectableTags;
 
-    [Header("Torch Direction")]
-    [Tooltip("Which direction the torch is pointing. Most 2D spot lights point 'Up'.")]
-    [SerializeField] private Direction torchDirection = Direction.Up;
+    [Header("Mouse Tracking")]
+    public bool TrackMouse = true;
 
     private Light2D torchLight;
-
-    private enum Direction { Up, Right, Down, Left }
 
     private void Awake()
     {
@@ -24,7 +21,20 @@ public class TorchVision : MonoBehaviour
 
     private void Update()
     {
+        if (TrackMouse)
+            RotateTorchTowardsMouse();
+
         DetectObjectsInLightCone();
+    }
+
+    private void RotateTorchTowardsMouse()
+    {
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 dir = mousePos - transform.position;
+        dir.z = 0f;
+
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f; // Adjust for Up direction
+        transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 
     private void DetectObjectsInLightCone()
@@ -40,25 +50,13 @@ public class TorchVision : MonoBehaviour
                 continue;
 
             Vector2 dirToTarget = (hit.transform.position - transform.position).normalized;
-            Vector2 facingDir = GetFacingDirection();
+            Vector2 facingDir = transform.up; // always uses current rotation
 
             float angle = Vector2.Angle(facingDir, dirToTarget);
             if (angle <= coneAngle)
             {
                 Debug.Log($"🔥 Detected [{hit.gameObject.tag}] in torchlight: {hit.gameObject.name}");
             }
-        }
-    }
-
-    private Vector2 GetFacingDirection()
-    {
-        switch (torchDirection)
-        {
-            case Direction.Up: return transform.up;
-            case Direction.Down: return -transform.up;
-            case Direction.Left: return -transform.right;
-            case Direction.Right: return transform.right;
-            default: return transform.up;
         }
     }
 
@@ -83,7 +81,7 @@ public class TorchVision : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, radius);
 
         // Visualize cone
-        Vector3 facingDir = GetFacingDirection() * radius;
+        Vector3 facingDir = transform.up * radius;
         Quaternion leftRot = Quaternion.AngleAxis(-coneAngle, Vector3.forward);
         Quaternion rightRot = Quaternion.AngleAxis(coneAngle, Vector3.forward);
 
