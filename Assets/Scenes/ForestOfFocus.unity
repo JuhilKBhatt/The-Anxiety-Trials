@@ -4624,11 +4624,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pathTilemap: {fileID: 1117819970}
-  pathTile: {fileID: 11400000, guid: 9c35a1bd39f7d43d798efc91cf35bbb2, type: 2}
+  startTile: {fileID: 11400000, guid: 47bb4d51300f54678b7d9c15f2e3f37a, type: 2}
+  endTile: {fileID: 11400000, guid: 15adb942afa1d4bdeb2c94f36afb6971, type: 2}
+  pathTile: {fileID: 11400000, guid: 3edf053449c20441b98b38255abce4ac, type: 2}
+  detailTiles: []
   startPos: {x: 0, y: 0}
-  pathLength: 50
+  pathLength: 200
   turnChance: 0.3
+  detailChance: 0.15
   generateOnStart: 1
+  pathWidth: 1
   drawGizmos: 1
 --- !u!1001 &1923065562
 PrefabInstance:
