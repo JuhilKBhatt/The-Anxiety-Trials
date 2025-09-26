@@ -4588,6 +4588,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1731319058}
+  - component: {fileID: 1731319059}
   m_Layer: 0
   m_Name: SceneManager
   m_TagString: Untagged
@@ -4610,6 +4611,25 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1731319059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1731319057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97d67fea232544b43ab38229de0ddbf8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pathTilemap: {fileID: 1117819970}
+  pathTile: {fileID: 11400000, guid: 9c35a1bd39f7d43d798efc91cf35bbb2, type: 2}
+  startPos: {x: 0, y: 0}
+  pathLength: 50
+  turnChance: 0.3
+  generateOnStart: 1
+  drawGizmos: 1
 --- !u!1001 &1923065562
 PrefabInstance:
   m_ObjectHideFlags: 0
