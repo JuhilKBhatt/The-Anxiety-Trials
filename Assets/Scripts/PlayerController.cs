@@ -21,6 +21,11 @@ public class PlayerController : MonoBehaviour
     private bool isHurt;
     private bool isDead;
 
+    [Header("Torch Vision Settings")]
+    public GameObject torchPrefab;
+    public Transform torchMountPoint;
+    public bool hasTorch = true;
+
     // Store the last direction player moved
     private Vector2 lastMoveDirection = Vector2.down; // Default facing down (you can change this)
 
@@ -29,6 +34,11 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         rb.gravityScale = 0f; // Top-down: no gravity
+
+        if (torchPrefab != null && torchMountPoint != null && hasTorch)
+        {
+            Instantiate(torchPrefab, torchMountPoint.position, torchMountPoint.rotation, torchMountPoint);
+        }
     }
 
     private void Update()
