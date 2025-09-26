@@ -551,6 +551,17 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!114 &804180680 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7966652192970037106, guid: 7701f868afa134bef8a01155dbd2e253, type: 3}
+  m_PrefabInstance: {fileID: 1923065562}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 240409690389e488dab6e44c96769710, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1074494640 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 451768813344128789, guid: 30e3cad163dec4ca79cfd2df3abc8cf1, type: 3}
@@ -946,6 +957,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1731319058}
   - component: {fileID: 1731319062}
+  - component: {fileID: 1731319063}
   m_Layer: 0
   m_Name: SceneManager
   m_TagString: Untagged
@@ -995,6 +1007,25 @@ MonoBehaviour:
   worldWidth: 250
   worldHeight: 40
   generateOnStart: 1
+--- !u!114 &1731319063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1731319057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f426990dd288f4153ab3bb7c1ea08425, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerFollower: {fileID: 1074494647}
+  spirit: {fileID: 804180680}
+  torch: {fileID: 0}
+  inhaleTime: 4
+  holdTime: 7
+  exhaleTime: 8
+  debugLogs: 1
 --- !u!1001 &1923065562
 PrefabInstance:
   m_ObjectHideFlags: 0
