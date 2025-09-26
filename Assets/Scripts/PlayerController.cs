@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
     private bool isHurt;
     private bool isDead;
 
-    // ✅ Store the last direction player moved
+    // Store the last direction player moved
     private Vector2 lastMoveDirection = Vector2.down; // Default facing down (you can change this)
 
     private void Awake()
