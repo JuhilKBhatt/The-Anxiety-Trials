@@ -996,6 +996,7 @@ MonoBehaviour:
   groundTilemap: {fileID: 741406968}
   detailTilemap: {fileID: 1660023159}
   grassTile: {fileID: 11400000, guid: 54b9035d3f82b45d79401c701e105d3a, type: 2}
+  pathTile: {fileID: 11400000, guid: 54b9035d3f82b45d79401c701e105d3a, type: 2}
   decorationTiles:
   - {fileID: 11400000, guid: d5c9e0f21fec644a8a68cd28d58fe07e, type: 2}
   - {fileID: 11400000, guid: 49f69dfb6ba924a118776d62d5941e51, type: 2}
@@ -1021,7 +1022,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerFollower: {fileID: 1074494647}
   spirit: {fileID: 804180680}
-  torch: {fileID: 0}
+  torchPrefab: {fileID: 5971469950088585322, guid: 175b18db165ff45be964c98c1cf693c0, type: 3}
+  torchParent: {fileID: 1434186262}
   inhaleTime: 4
   holdTime: 7
   exhaleTime: 8
@@ -1150,6 +1152,10 @@ PrefabInstance:
     - target: {fileID: 7736024065700465609, guid: 30e3cad163dec4ca79cfd2df3abc8cf1, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 8983894741233940683, guid: 30e3cad163dec4ca79cfd2df3abc8cf1, type: 3}
+      propertyPath: hasTorch
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8983894741233940683, guid: 30e3cad163dec4ca79cfd2df3abc8cf1, type: 3}
       propertyPath: torchPrefab

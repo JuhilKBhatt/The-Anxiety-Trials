@@ -6,11 +6,12 @@ public class ForestEnvironmentGenerator : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private PathGenerator pathGenerator;  // Reference to your PathGenerator
-    [SerializeField] private Tilemap groundTilemap;        // A separate Tilemap for ground/grass
-    [SerializeField] private Tilemap detailTilemap;        // A separate Tilemap for trees/objects
+    [SerializeField] private Tilemap groundTilemap;        // Tilemap for ground/grass/path
+    [SerializeField] private Tilemap detailTilemap;        // Tilemap for trees/objects
 
-    [Header("Ground Settings")]
+    [Header("Tiles")]
     [SerializeField] private TileBase grassTile;
+    [SerializeField] private TileBase pathTile;            // 👈 New: Tile for the path itself
 
     [Header("Decoration Settings")]
     [SerializeField] private List<TileBase> decorationTiles;
@@ -33,7 +34,7 @@ public class ForestEnvironmentGenerator : MonoBehaviour
     [ContextMenu("Generate Environment Now")]
     public void GenerateEnvironment()
     {
-        if (pathGenerator == null || groundTilemap == null || grassTile == null)
+        if (pathGenerator == null || groundTilemap == null || grassTile == null || pathTile == null)
         {
             Debug.LogError("⚠️ Missing references on EnvironmentGenerator!");
             return;
@@ -41,9 +42,9 @@ public class ForestEnvironmentGenerator : MonoBehaviour
 
         groundTilemap.ClearAllTiles();
         detailTilemap?.ClearAllTiles();
-
-        // Collect all path positions so we don't overwrite them
         pathPositions.Clear();
+
+        // ✅ Collect all path positions from PathGenerator
         foreach (Vector3 worldPos in pathGenerator.worldPathPoints)
         {
             Vector3Int cell = groundTilemap.WorldToCell(worldPos);
@@ -54,21 +55,18 @@ public class ForestEnvironmentGenerator : MonoBehaviour
             pathPositions.Add(cell + Vector3Int.down);
         }
 
-        // Generate the environment
+        // 🌱 Paint environment (grass + decorations)
         for (int x = -worldWidth / 2; x < worldWidth / 2; x++)
         {
             for (int y = -worldHeight / 2; y < worldHeight / 2; y++)
             {
                 Vector3Int pos = new Vector3Int(x, y, 0);
 
-                // Skip if it's part of the path
-                if (pathPositions.Contains(pos)) continue;
-
-                // Paint base ground (grass)
+                // Paint base ground tile
                 groundTilemap.SetTile(pos, grassTile);
 
-                // Maybe place a decoration (tree, bush, etc.)
-                if (decorationTiles.Count > 0 && Random.value < decorationSpawnChance)
+                // Optional: spawn decoration if not path
+                if (!pathPositions.Contains(pos) && decorationTiles.Count > 0 && Random.value < decorationSpawnChance)
                 {
                     TileBase deco = decorationTiles[Random.Range(0, decorationTiles.Count)];
                     detailTilemap?.SetTile(pos, deco);
@@ -76,7 +74,13 @@ public class ForestEnvironmentGenerator : MonoBehaviour
             }
         }
 
-        Debug.Log("🌿 Environment generated around the path!");
+        // 🪵 Finally: Paint the path itself
+        foreach (var pos in pathPositions)
+        {
+            groundTilemap.SetTile(pos, pathTile);
+        }
+
+        Debug.Log("🌿 Environment generated and path painted!");
     }
 
     private void OnDrawGizmosSelected()
