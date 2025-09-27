@@ -181,5 +181,4 @@ MonoBehaviour:
     m_Bits: 4294967295
   detectableTags:
   - Spirit
-  - Player
   TrackMouse: 1

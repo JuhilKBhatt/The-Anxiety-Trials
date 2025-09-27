@@ -39,8 +39,8 @@ public class TorchVision : MonoBehaviour
 
     private void DetectObjectsInLightCone()
     {
-        float radius = torchLight.pointLightOuterRadius; 
-        float coneAngle = torchLight.pointLightOuterAngle * 0.5f; 
+        float radius = torchLight.pointLightOuterRadius;
+        float coneAngle = torchLight.pointLightOuterAngle * 0.5f;
 
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius, detectionMask);
 
@@ -91,5 +91,17 @@ public class TorchVision : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position, transform.position + leftDir);
         Gizmos.DrawLine(transform.position, transform.position + rightDir);
+    }
+    
+    public bool IsPointingAt(Transform target)
+    {
+        float radius = torchLight.pointLightOuterRadius;
+        float coneAngle = torchLight.pointLightOuterAngle * 0.5f;
+
+        Vector2 dirToTarget = (target.position - transform.position).normalized;
+        Vector2 facingDir = transform.up;
+        float angle = Vector2.Angle(facingDir, dirToTarget);
+
+        return Vector2.Distance(transform.position, target.position) <= radius && angle <= coneAngle;
     }
 }

@@ -1,13 +1,16 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class BreathingCycleManager : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private AutoFollower playerFollower;   // Auto-walk script
-    [SerializeField] private SpiritMovement spirit;         // Spirit to target
-    [SerializeField] private GameObject torchPrefab;        // Torch prefab (assigned in inspector)
-    [SerializeField] private Transform torchParent;         // Where to attach the torch (e.g., player's hand or player root)
+    [SerializeField] private AutoFollower playerFollower;
+    [SerializeField] private SpiritMovement spirit;
+    [SerializeField] private GameObject torchPrefab;
+    [SerializeField] private Transform torchParent;
 
     [Header("Breathing Timings (seconds)")]
     [SerializeField] private float inhaleTime = 4f;
@@ -17,83 +20,123 @@ public class BreathingCycleManager : MonoBehaviour
     public float HoldTime => holdTime;
     public float ExhaleTime => exhaleTime;
 
+    [Header("Breathing Mastery UI")]
+    [SerializeField] private Slider progressBar;
+    [SerializeField] private TextMeshProUGUI statusText;
+    [SerializeField] private float masteryTime = 10f;
+    [SerializeField] private string endSceneName = "BreathingEnd";
+
     [Header("Debug")]
     [SerializeField] private bool debugLogs = true;
 
     private TorchVision torch;
+    private float masteryProgress = 0f;
+    private bool gameEnded = false;
 
     private void Start()
     {
-        // 1️⃣ Spawn or find torch at runtime
+        // Spawn torch prefab
         if (torchPrefab != null && torchParent != null)
         {
             GameObject torchInstance = Instantiate(torchPrefab, torchParent);
             torch = torchInstance.GetComponent<TorchVision>();
-
             if (torch == null)
-                Debug.LogError("BreathingCycleManager: Torch prefab does not have a TorchVision component!");
+                Debug.LogError("Torch prefab missing TorchVision component!");
         }
         else
         {
-            // If it's already in the scene (not spawned), try to find it
             torch = FindAnyObjectByType<TorchVision>();
             if (torch == null)
             {
-                Debug.LogError("BreathingCycleManager: No TorchVision found or prefab not assigned!");
+                Debug.LogError("No TorchVision found or prefab not assigned!");
                 return;
             }
         }
 
         if (playerFollower == null || spirit == null)
         {
-            Debug.LogError("BreathingCycleManager: Missing required references!");
+            Debug.LogError("Missing required references!");
             return;
         }
 
-        // Ensure spirit is hidden at start
-        spirit.gameObject.SetActive(false);
+        if (progressBar != null) progressBar.value = 0f;
+        if (statusText != null) statusText.text = "";
 
-        // Start the breathing cycle
+        spirit.gameObject.SetActive(false);
         StartCoroutine(BreathingCycle());
     }
 
     private IEnumerator BreathingCycle()
     {
-        while (true)
+        while (!gameEnded)
         {
             // ---------------- INHALE ----------------
-            playerFollower.StartAutoFollow(); 
+            if (debugLogs) Debug.Log("Inhale");
+            playerFollower.StartAutoFollow();
             spirit.gameObject.SetActive(false);
-
-            if (debugLogs) Debug.Log("🌬 Inhale: Player walking for " + inhaleTime + "s");
+            if (statusText != null) statusText.text = "Inhale";
             yield return new WaitForSeconds(inhaleTime);
 
             // ---------------- HOLD ----------------
-            playerFollower.StopAutoFollow(); 
+            if (debugLogs) Debug.Log("Hold");
+            playerFollower.StopAutoFollow();
             spirit.gameObject.SetActive(true);
-
-            if (debugLogs) Debug.Log("⏸ Hold: Aim torch at spirit for " + holdTime + "s");
+            if (statusText != null) statusText.text = "Hold";
 
             float holdTimer = 0f;
-            while (holdTimer < holdTime)
+            masteryProgress = 0f;
+
+            while (holdTimer < holdTime && !gameEnded)
             {
                 holdTimer += Time.deltaTime;
 
-                // ✅ Example detection placeholder
-                // if (torch.IsPointingAt(spirit.transform))
-                // {
-                //     Debug.Log("🔦 Torch is on the spirit!");
-                // }
+                if (torch != null && torch.IsPointingAt(spirit.transform))
+                {
+                    masteryProgress += Time.deltaTime;
+                    if (progressBar != null)
+                        progressBar.value = Mathf.Clamp01(masteryProgress / masteryTime);
+
+                    if (masteryProgress >= masteryTime)
+                    {
+                        masteryProgress = masteryTime;
+                        BreathingMastered();
+                    }
+                }
+                else
+                {
+                    masteryProgress -= Time.deltaTime * 0.5f;
+                    masteryProgress = Mathf.Max(0f, masteryProgress);
+                    if (progressBar != null)
+                        progressBar.value = Mathf.Clamp01(masteryProgress / masteryTime);
+                }
 
                 yield return null;
             }
 
             // ---------------- EXHALE ----------------
+            if (debugLogs) Debug.Log("Exhale");
             spirit.gameObject.SetActive(false);
             playerFollower.StartAutoFollow();
-
-            if (debugLogs) Debug.Log("💨 Exhale: Player walking for " + exhaleTime + "s");
+            if (statusText != null) statusText.text = "Exhale";
             yield return new WaitForSeconds(exhaleTime);
         }
+    }
+
+    private void BreathingMastered()
+    {
+        if (gameEnded) return;
+
+        gameEnded = true;
+        if (statusText != null) statusText.text = "🌟 Breathing Mastered 🌟";
+        Debug.Log("🎉 Breathing Mastered!");
+        Invoke(nameof(EndGame), 2f);
+    }
+
+    private void EndGame()
+    {
+        if (!string.IsNullOrEmpty(endSceneName))
+            SceneManager.LoadScene(endSceneName);
+        else
+            Debug.Log("Game would end here. No end scene set.");
     }
 }
