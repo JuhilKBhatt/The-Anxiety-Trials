@@ -13,6 +13,9 @@ public class BreathingCycleManager : MonoBehaviour
     [SerializeField] private float inhaleTime = 4f;
     [SerializeField] private float holdTime = 7f;
     [SerializeField] private float exhaleTime = 8f;
+    public float InhaleTime => inhaleTime;
+    public float HoldTime => holdTime;
+    public float ExhaleTime => exhaleTime;
 
     [Header("Debug")]
     [SerializeField] private bool debugLogs = true;
