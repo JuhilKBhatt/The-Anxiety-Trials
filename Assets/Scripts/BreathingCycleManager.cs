@@ -74,14 +74,14 @@ public class BreathingCycleManager : MonoBehaviour
             if (debugLogs) Debug.Log("Inhale");
             playerFollower.StartAutoFollow();
             spirit.gameObject.SetActive(false);
-            if (statusText != null) statusText.text = "Inhale";
+            if (statusText != null) statusText.text = "";
             yield return new WaitForSeconds(inhaleTime);
 
             // ---------------- HOLD ----------------
             if (debugLogs) Debug.Log("Hold");
             playerFollower.StopAutoFollow();
             spirit.gameObject.SetActive(true);
-            if (statusText != null) statusText.text = "Hold";
+            if (statusText != null) statusText.text = "Point at the Spirit";
 
             float holdTimer = 0f;
             masteryProgress = 0f;
@@ -117,7 +117,7 @@ public class BreathingCycleManager : MonoBehaviour
             if (debugLogs) Debug.Log("Exhale");
             spirit.gameObject.SetActive(false);
             playerFollower.StartAutoFollow();
-            if (statusText != null) statusText.text = "Exhale";
+            if (statusText != null) statusText.text = "";
             yield return new WaitForSeconds(exhaleTime);
         }
     }
@@ -127,8 +127,8 @@ public class BreathingCycleManager : MonoBehaviour
         if (gameEnded) return;
 
         gameEnded = true;
-        if (statusText != null) statusText.text = "🌟 Breathing Mastered 🌟";
-        Debug.Log("🎉 Breathing Mastered!");
+        if (statusText != null) statusText.text = "Breathing Mastered";
+        Debug.Log("Breathing Mastered!");
         Invoke(nameof(EndGame), 2f);
     }
 
