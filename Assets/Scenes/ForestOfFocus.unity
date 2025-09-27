@@ -1835,7 +1835,7 @@ MonoBehaviour:
   exhaleTime: 8
   progressBar: {fileID: 1239464472}
   statusText: {fileID: 1718336856}
-  masteryTime: 100
+  masteryTime: 10
   endSceneName: BreathingEnd
   debugLogs: 1
 --- !u!1 &1817330151

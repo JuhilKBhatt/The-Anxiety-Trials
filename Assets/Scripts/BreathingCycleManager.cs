@@ -84,7 +84,6 @@ public class BreathingCycleManager : MonoBehaviour
             if (statusText != null) statusText.text = "Point at the Spirit";
 
             float holdTimer = 0f;
-            masteryProgress = 0f;
 
             while (holdTimer < holdTime && !gameEnded)
             {
@@ -104,7 +103,7 @@ public class BreathingCycleManager : MonoBehaviour
                 }
                 else
                 {
-                    masteryProgress -= Time.deltaTime * 0.5f;
+                    masteryProgress -= Time.deltaTime * 0.25f;
                     masteryProgress = Mathf.Max(0f, masteryProgress);
                     if (progressBar != null)
                         progressBar.value = Mathf.Clamp01(masteryProgress / masteryTime);

@@ -86,16 +86,19 @@ public class AutoFollower : MonoBehaviour
             return;
         }
 
-        pathPoints = new List<Vector3>(pathGenerator.worldPathPoints);
-        currentTargetIndex = 0;
+        // Only initialize pathPoints if empty
+        if (pathPoints == null || pathPoints.Count == 0)
+            pathPoints = new List<Vector3>(pathGenerator.worldPathPoints);
+
+        // DO NOT reset currentTargetIndex! Keep the last position
         autoFollow = true;
 
-        Debug.Log($"AutoFollower: Started auto-follow with {pathPoints.Count} points.");
+        Debug.Log($"AutoFollower: Resuming auto-follow at index {currentTargetIndex}.");
     }
 
     public void StopAutoFollow()
     {
         autoFollow = false;
-        Debug.Log("AutoFollower: Auto-follow stopped.");
+        Debug.Log("AutoFollower: Auto-follow paused.");
     }
 }
