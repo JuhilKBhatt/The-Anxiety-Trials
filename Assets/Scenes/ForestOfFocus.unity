@@ -1811,7 +1811,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 901c510572f3e450d907f92cae4b9590, type: 2}
   - {fileID: 11400000, guid: 738171b6abe8e41d4918e8255f27da0d, type: 2}
   decorationSpawnChance: 0.1
-  worldWidth: 250
+  worldWidth: 350
   worldHeight: 40
   generateOnStart: 1
 --- !u!114 &1731319063
