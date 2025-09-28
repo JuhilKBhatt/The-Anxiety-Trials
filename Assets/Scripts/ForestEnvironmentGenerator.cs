@@ -2,20 +2,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+[System.Serializable]
+public class TallDecoration
+{
+    public TileBase bottomTile;
+    public TileBase topTile;
+}
+
 public class ForestEnvironmentGenerator : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private PathGenerator pathGenerator;  // Reference to your PathGenerator
-    [SerializeField] private Tilemap groundTilemap;        // Tilemap for ground/grass/path
-    [SerializeField] private Tilemap detailTilemap;        // Tilemap for trees/objects
+    [SerializeField] private PathGenerator pathGenerator;  
+    [SerializeField] private Tilemap groundTilemap;        
+    [SerializeField] private Tilemap detailTilemap;        
 
     [Header("Tiles")]
     [SerializeField] private TileBase grassTile;
-    [SerializeField] private TileBase pathTile;            // 👈 New: Tile for the path itself
+    [SerializeField] private TileBase pathTile;
 
-    [Header("Decoration Settings")]
+    [Header("Decoration Settings - Single Tile")]
     [SerializeField] private List<TileBase> decorationTiles;
     [SerializeField, Range(0f, 1f)] private float decorationSpawnChance = 0.1f;
+
+    [Header("Decoration Settings - Tall Objects (2-Tile)")]
+    [SerializeField] private List<TallDecoration> tallDecorations;
+    [SerializeField, Range(0f, 1f)] private float tallDecorationSpawnChance = 0.05f;
 
     [Header("World Bounds")]
     [SerializeField] private int worldWidth = 100;
@@ -65,11 +76,35 @@ public class ForestEnvironmentGenerator : MonoBehaviour
                 // Paint base ground tile
                 groundTilemap.SetTile(pos, grassTile);
 
-                // Optional: spawn decoration if not path
-                if (!pathPositions.Contains(pos) && decorationTiles.Count > 0 && Random.value < decorationSpawnChance)
+                // Skip decoration if it's a path tile
+                if (pathPositions.Contains(pos)) continue;
+
+                // 🌳 Try spawning a tall decoration
+                if (tallDecorations.Count > 0 && Random.value < tallDecorationSpawnChance)
                 {
-                    TileBase deco = decorationTiles[Random.Range(0, decorationTiles.Count)];
-                    detailTilemap?.SetTile(pos, deco);
+                    Vector3Int topPos = pos + Vector3Int.up;
+
+                    // ✅ Check that both bottom and top are empty and not part of the path
+                    if (!pathPositions.Contains(topPos) &&
+                        detailTilemap.GetTile(pos) == null &&
+                        detailTilemap.GetTile(topPos) == null)
+                    {
+                        TallDecoration tall = tallDecorations[Random.Range(0, tallDecorations.Count)];
+                        if (tall.bottomTile != null)
+                            detailTilemap.SetTile(pos, tall.bottomTile);
+                        if (tall.topTile != null)
+                            detailTilemap.SetTile(topPos, tall.topTile);
+                    }
+                }
+                // 🌼 Otherwise try spawning a single-tile decoration
+                else if (decorationTiles.Count > 0 && Random.value < decorationSpawnChance)
+                {
+                    // ✅ Only place if the tile is free
+                    if (detailTilemap.GetTile(pos) == null)
+                    {
+                        TileBase deco = decorationTiles[Random.Range(0, decorationTiles.Count)];
+                        detailTilemap.SetTile(pos, deco);
+                    }
                 }
             }
         }
