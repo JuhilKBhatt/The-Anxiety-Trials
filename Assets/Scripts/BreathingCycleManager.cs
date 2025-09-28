@@ -2,7 +2,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.SceneManagement;
 
 public class BreathingCycleManager : MonoBehaviour
 {
@@ -24,7 +23,6 @@ public class BreathingCycleManager : MonoBehaviour
     [SerializeField] private Slider progressBar;
     [SerializeField] private TextMeshProUGUI statusText;
     [SerializeField] private float masteryTime = 10f;
-    [SerializeField] private string endSceneName = "BreathingEnd";
 
     [Header("Debug")]
     [SerializeField] private bool debugLogs = true;
@@ -32,6 +30,7 @@ public class BreathingCycleManager : MonoBehaviour
     private TorchVision torch;
     private float masteryProgress = 0f;
     private bool gameEnded = false;
+    private Coroutine breathingRoutine;
 
     private void Start()
     {
@@ -63,7 +62,7 @@ public class BreathingCycleManager : MonoBehaviour
         if (statusText != null) statusText.text = "";
 
         spirit.gameObject.SetActive(false);
-        StartCoroutine(BreathingCycle());
+        breathingRoutine = StartCoroutine(BreathingCycle());
     }
 
     private IEnumerator BreathingCycle()
@@ -75,7 +74,9 @@ public class BreathingCycleManager : MonoBehaviour
             playerFollower.StartAutoFollow();
             spirit.gameObject.SetActive(false);
             if (statusText != null) statusText.text = "";
-            yield return new WaitForSeconds(inhaleTime);
+            yield return WaitOrBreak(inhaleTime);
+
+            if (gameEnded) yield break;
 
             // ---------------- HOLD ----------------
             if (debugLogs) Debug.Log("Hold");
@@ -84,7 +85,6 @@ public class BreathingCycleManager : MonoBehaviour
             if (statusText != null) statusText.text = "Point at the Spirit";
 
             float holdTimer = 0f;
-
             while (holdTimer < holdTime && !gameEnded)
             {
                 holdTimer += Time.deltaTime;
@@ -112,30 +112,49 @@ public class BreathingCycleManager : MonoBehaviour
                 yield return null;
             }
 
+            if (gameEnded) yield break;
+
             // ---------------- EXHALE ----------------
             if (debugLogs) Debug.Log("Exhale");
             spirit.gameObject.SetActive(false);
             playerFollower.StartAutoFollow();
             if (statusText != null) statusText.text = "";
-            yield return new WaitForSeconds(exhaleTime);
+            yield return WaitOrBreak(exhaleTime);
         }
     }
 
     private void BreathingMastered()
     {
         if (gameEnded) return;
-
         gameEnded = true;
-        if (statusText != null) statusText.text = "Breathing Mastered";
-        Debug.Log("Breathing Mastered!");
-        Invoke(nameof(EndGame), 2f);
+
+        // Stop the breathing cycle coroutine
+        if (breathingRoutine != null)
+            StopCoroutine(breathingRoutine);
+
+        // Stop everything
+        playerFollower.StopAutoFollow();
+        spirit.gameObject.SetActive(false);
+
+        if (statusText != null)
+            statusText.text = "Breathing Mastered - End of Game ";
+
+        Debug.Log("Breathing Mastered! Game stopped.");
+
+        // Optional: freeze game logic completely
+        // Time.timeScale = 0f;
     }
 
-    private void EndGame()
+    /// <summary>
+    /// Helper: Wait for seconds OR exit early if game ended.
+    /// </summary>
+    private IEnumerator WaitOrBreak(float seconds)
     {
-        if (!string.IsNullOrEmpty(endSceneName))
-            SceneManager.LoadScene(endSceneName);
-        else
-            Debug.Log("Game would end here. No end scene set.");
+        float t = 0f;
+        while (t < seconds && !gameEnded)
+        {
+            t += Time.deltaTime;
+            yield return null;
+        }
     }
 }
