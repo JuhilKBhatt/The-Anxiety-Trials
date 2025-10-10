@@ -103,7 +103,7 @@ public class BreathingCycleManager : MonoBehaviour
                             Destroy(spirit.gameObject);
                             yield return new WaitForSeconds(0.5f);
                             SpawnNewSpirit();
-                            yield break; // Restart cycle with new spirit
+                            continue;
                         }
                     }
 
@@ -150,6 +150,10 @@ public class BreathingCycleManager : MonoBehaviour
         // Instantiate new Spirit prefab
         GameObject newSpiritObj = Instantiate(spiritPrefab, spiritSpawnParent);
         spirit = newSpiritObj.GetComponent<SpiritMovement>();
+
+        // Reassign its orbit target (usually the player)
+        if (playerFollower != null)
+            spirit.centerTarget = playerFollower.transform;
 
         if (debugLogs) Debug.Log("Spawned a new Spirit prefab.");
     }

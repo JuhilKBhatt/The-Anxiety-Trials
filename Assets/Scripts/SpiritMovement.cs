@@ -3,11 +3,11 @@ using UnityEngine;
 public class SpiritMovement : MonoBehaviour
 {
     [Header("Movement Settings")]
-    public float speed = 1f;
-    [Range(0f, 1f)] public float randomness = 0.2f;
-    public float radius = 2f;
-    public float reverseChanceInterval = 2f;
-    [Range(0f, 1f)] public float reverseChance = 0.3f;
+    public float speed = 0.25f;
+    [Range(0f, 1f)] public float randomness = 0.6f;
+    public float radius = 5f;
+    public float reverseChanceInterval = 1.5f;
+    [Range(0f, 1f)] public float reverseChance = 0.85f;
 
     public Transform centerTarget; // The player to orbit
 
