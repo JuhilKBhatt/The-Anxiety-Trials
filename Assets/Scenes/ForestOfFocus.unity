@@ -539,7 +539,7 @@ MonoBehaviour:
   m_BlendStyleIndex: 0
   m_FalloffIntensity: 0.5
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1
+  m_Intensity: 0.1
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
   m_ApplyToSortingLayers: 00000000
@@ -1841,6 +1841,8 @@ MonoBehaviour:
   spirit: {fileID: 804180680}
   torchPrefab: {fileID: 5971469950088585322, guid: 175b18db165ff45be964c98c1cf693c0, type: 3}
   torchParent: {fileID: 1434186262}
+  spiritPrefab: {fileID: 2952223463144408158, guid: 7701f868afa134bef8a01155dbd2e253, type: 3}
+  spiritSpawnParent: {fileID: 0}
   inhaleTime: 4
   holdTime: 7
   exhaleTime: 8

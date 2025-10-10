@@ -275,5 +275,8 @@ MonoBehaviour:
   - {fileID: 971333005, guid: fd884f90857334b529721b00f319164b, type: 3}
   - {fileID: 2769619269573066063, guid: fd884f90857334b529721b00f319164b, type: 3}
   spriteRenderer: {fileID: 6034396401373141309}
+  spiritRenderer: {fileID: 2345160653223687755}
   maxHealth: 100
   currentHealth: 0
+  minOpacity: 0.5
+  maxOpacity: 1

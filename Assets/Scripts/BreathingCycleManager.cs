@@ -10,6 +10,8 @@ public class BreathingCycleManager : MonoBehaviour
     [SerializeField] private SpiritMovement spirit;
     [SerializeField] private GameObject torchPrefab;
     [SerializeField] private Transform torchParent;
+    [SerializeField] private GameObject spiritPrefab;  // 👈 new: assign your Spirit prefab here
+    [SerializeField] private Transform spiritSpawnParent; // optional, if you want a parent for spirits
 
     [Header("Breathing Timings (seconds)")]
     [SerializeField] private float inhaleTime = 4f;
@@ -91,12 +93,20 @@ public class BreathingCycleManager : MonoBehaviour
 
                 if (torch != null && torch.IsPointingAt(spirit.transform))
                 {
-                    // Example reference to the SpiritHealthBar component
                     SpiritHealthBar spiritHealth = spirit.GetComponentInChildren<SpiritHealthBar>();
                     if (spiritHealth != null)
                     {
                         spiritHealth.TakeDamage(0.15f);
+
+                        if (spiritHealth.IsDead)
+                        {
+                            Destroy(spirit.gameObject);
+                            yield return new WaitForSeconds(0.5f);
+                            SpawnNewSpirit();
+                            yield break; // Restart cycle with new spirit
+                        }
                     }
+
                     masteryProgress += Time.deltaTime;
                     if (progressBar != null)
                         progressBar.value = Mathf.Clamp01(masteryProgress / masteryTime);
@@ -129,16 +139,29 @@ public class BreathingCycleManager : MonoBehaviour
         }
     }
 
+    private void SpawnNewSpirit()
+    {
+        if (spiritPrefab == null)
+        {
+            Debug.LogError("Spirit prefab not assigned!");
+            return;
+        }
+
+        // Instantiate new Spirit prefab
+        GameObject newSpiritObj = Instantiate(spiritPrefab, spiritSpawnParent);
+        spirit = newSpiritObj.GetComponent<SpiritMovement>();
+
+        if (debugLogs) Debug.Log("Spawned a new Spirit prefab.");
+    }
+
     private void BreathingMastered()
     {
         if (gameEnded) return;
         gameEnded = true;
 
-        // Stop the breathing cycle coroutine
         if (breathingRoutine != null)
             StopCoroutine(breathingRoutine);
 
-        // Stop everything
         playerFollower.StopAutoFollow();
         spirit.gameObject.SetActive(false);
 
@@ -146,14 +169,8 @@ public class BreathingCycleManager : MonoBehaviour
             statusText.text = "Breathing Mastered - End of Game ";
 
         Debug.Log("Breathing Mastered! Game stopped.");
-
-        // Optional: freeze game logic completely
-        // Time.timeScale = 0f;
     }
 
-    /// <summary>
-    /// Helper: Wait for seconds OR exit early if game ended.
-    /// </summary>
     private IEnumerator WaitOrBreak(float seconds)
     {
         float t = 0f;
