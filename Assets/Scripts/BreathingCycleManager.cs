@@ -91,6 +91,12 @@ public class BreathingCycleManager : MonoBehaviour
 
                 if (torch != null && torch.IsPointingAt(spirit.transform))
                 {
+                    // Example reference to the SpiritHealthBar component
+                    SpiritHealthBar spiritHealth = spirit.GetComponentInChildren<SpiritHealthBar>();
+                    if (spiritHealth != null)
+                    {
+                        spiritHealth.TakeDamage(0.15f);
+                    }
                     masteryProgress += Time.deltaTime;
                     if (progressBar != null)
                         progressBar.value = Mathf.Clamp01(masteryProgress / masteryTime);
