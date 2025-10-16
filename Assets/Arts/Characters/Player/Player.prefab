@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8983894741233940683}
   - component: {fileID: 79756543473053500}
   - component: {fileID: 3642154843403476460}
+  - component: {fileID: 6024987120048133710}
   m_Layer: 0
   m_Name: PlayerSprite
   m_TagString: Player
@@ -132,6 +133,7 @@ MonoBehaviour:
   canMove: 1
   torchPrefab: {fileID: 5971469950088585322, guid: 175b18db165ff45be964c98c1cf693c0, type: 3}
   torchMountPoint: {fileID: 7159937985263152095}
+  hasTorch: 0
 --- !u!50 &79756543473053500
 Rigidbody2D:
   serializedVersion: 5
@@ -196,6 +198,22 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 0.9, y: 1.2}
   m_Direction: 0
+--- !u!114 &6024987120048133710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 451768813344128789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d31d00dac696f4a828afd1dca0d341c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pathGenerator: {fileID: 0}
+  moveSpeed: 2
+  autoFollow: 1
+  animator: {fileID: 6712705823511604340}
 --- !u!1 &6346828876039573176
 GameObject:
   m_ObjectHideFlags: 0

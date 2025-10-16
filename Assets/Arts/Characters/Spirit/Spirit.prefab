@@ -125,9 +125,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 240409690389e488dab6e44c96769710, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
+  speed: 0.25
   randomness: 0.6
-  radius: 1
+  radius: 5
   reverseChanceInterval: 1.5
   reverseChance: 0.85
   centerTarget: {fileID: 0}
@@ -276,7 +276,7 @@ MonoBehaviour:
   - {fileID: 2769619269573066063, guid: fd884f90857334b529721b00f319164b, type: 3}
   spriteRenderer: {fileID: 6034396401373141309}
   spiritRenderer: {fileID: 2345160653223687755}
-  maxHealth: 100
+  maxHealth: 250
   currentHealth: 0
   minOpacity: 0.5
   maxOpacity: 1

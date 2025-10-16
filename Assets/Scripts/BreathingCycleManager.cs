@@ -101,7 +101,6 @@ public class BreathingCycleManager : MonoBehaviour
                         if (spiritHealth.IsDead)
                         {
                             Destroy(spirit.gameObject);
-                            yield return new WaitForSeconds(0.5f);
                             SpawnNewSpirit();
                             continue;
                         }
