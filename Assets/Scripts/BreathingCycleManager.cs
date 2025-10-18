@@ -91,7 +91,7 @@ public class BreathingCycleManager : MonoBehaviour
                 if (torch.IsPointingAtTag())
                 {
                     // Damage the spirit through the manager
-                    spiritManager.DamageSpirit(0.15f * Time.deltaTime); // scaled per second
+                    spiritManager.DamageSpirit(0.5f * Time.deltaTime);
                     masteryProgress += Time.deltaTime;
                 }
                 else

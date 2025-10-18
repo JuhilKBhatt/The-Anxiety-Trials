@@ -6,9 +6,10 @@ public class SpiritManager : MonoBehaviour
     [SerializeField] private GameObject spiritPrefab;
     [SerializeField] private Transform spawnParent;
     [SerializeField] private Transform orbitTarget; // Usually the player
-    [SerializeField] private float maxHealth = 1f;
+    [SerializeField] private float maxHealth = 100f;
 
     private GameObject currentSpirit;
+    private SpiritHealthBar currentHealthBar;
     private float currentHealth;
 
     [Header("Debug")]
@@ -19,9 +20,6 @@ public class SpiritManager : MonoBehaviour
         SpawnSpirit();
     }
 
-    /// <summary>
-    /// Spawns a new Spirit prefab.
-    /// </summary>
     public void SpawnSpirit()
     {
         if (spiritPrefab == null)
@@ -34,19 +32,23 @@ public class SpiritManager : MonoBehaviour
             Destroy(currentSpirit);
 
         currentSpirit = Instantiate(spiritPrefab, spawnParent);
+
+        // Set orbit center
         SpiritMovement movement = currentSpirit.GetComponent<SpiritMovement>();
         if (movement != null)
             movement.centerTarget = orbitTarget;
 
+        // Grab health bar (must be child of spirit prefab)
+        currentHealthBar = currentSpirit.GetComponentInChildren<SpiritHealthBar>();
+
         currentHealth = maxHealth;
+        if (currentHealthBar != null)
+            currentHealthBar.UpdateHealthBar(1f);
 
         if (debugLogs)
             Debug.Log("Spawned new Spirit.");
     }
 
-    /// <summary>
-    /// Reduces the spirit's health by a given amount. Returns true if the spirit died.
-    /// </summary>
     public bool DamageSpirit(float amount)
     {
         if (currentSpirit == null)
@@ -55,15 +57,17 @@ public class SpiritManager : MonoBehaviour
         currentHealth -= amount;
         currentHealth = Mathf.Max(currentHealth, 0f);
 
+        // Update visual health bar
+        if (currentHealthBar != null)
+            currentHealthBar.UpdateHealthBar(currentHealth / maxHealth);
+
         if (debugLogs)
             Debug.Log($"Spirit health: {currentHealth}/{maxHealth}");
 
         if (currentHealth <= 0f)
         {
-            // Spirit died → respawn
             if (debugLogs)
                 Debug.Log("Spirit died. Respawning...");
-
             SpawnSpirit();
             return true;
         }
@@ -71,19 +75,6 @@ public class SpiritManager : MonoBehaviour
         return false;
     }
 
-    /// <summary>
-    /// Returns the current Spirit GameObject.
-    /// </summary>
-    public GameObject GetSpirit()
-    {
-        return currentSpirit;
-    }
-
-    /// <summary>
-    /// Returns the current health of the Spirit.
-    /// </summary>
-    public float GetHealth()
-    {
-        return currentHealth;
-    }
+    public GameObject GetSpirit() => currentSpirit;
+    public float GetHealth() => currentHealth;
 }

@@ -267,16 +267,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0c25e797b09b4840824e87d93bb74ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthSprites:
+  spiritManager: {fileID: 0}
+  healthBarRenderer: {fileID: 6034396401373141309}
+  healthBarSprites:
   - {fileID: 745248659, guid: fd884f90857334b529721b00f319164b, type: 3}
   - {fileID: 1840181331, guid: fd884f90857334b529721b00f319164b, type: 3}
   - {fileID: -1104749996, guid: fd884f90857334b529721b00f319164b, type: 3}
   - {fileID: -1873545792, guid: fd884f90857334b529721b00f319164b, type: 3}
   - {fileID: 971333005, guid: fd884f90857334b529721b00f319164b, type: 3}
   - {fileID: 2769619269573066063, guid: fd884f90857334b529721b00f319164b, type: 3}
-  spriteRenderer: {fileID: 6034396401373141309}
-  spiritRenderer: {fileID: 2345160653223687755}
-  maxHealth: 250
-  currentHealth: 0
-  minOpacity: 0.5
-  maxOpacity: 1
+  offset: {x: 0, y: 0.5, z: 0}
