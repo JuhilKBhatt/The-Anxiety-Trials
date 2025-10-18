@@ -7,8 +7,7 @@ public class SpiritManager : MonoBehaviour
     [SerializeField] private GameObject spiritPrefab;
     [SerializeField] private Transform spawnParent;
     [SerializeField] private Transform orbitTarget; // Usually the player
-    [SerializeField] private float maxHealth = 1f;
-    [SerializeField] private int maxSpirits = 5;
+    [SerializeField] private int maxSpirits = 10;
 
     [Header("Stress Integration")]
     [SerializeField] private StressValue globalStressValue; // ScriptableObject

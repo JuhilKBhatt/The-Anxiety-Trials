@@ -18,6 +18,8 @@ public class SpiritMovement : MonoBehaviour
     void Start()
     {
         nextReverseCheck = Time.time + reverseChanceInterval;
+        angle = Random.Range(0f, 2f * Mathf.PI); // random starting position
+        radius = Random.Range(4f, 6f); // optional spread radius
     }
 
     void Update()
