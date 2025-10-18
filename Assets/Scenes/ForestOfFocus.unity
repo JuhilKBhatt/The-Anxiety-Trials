@@ -324,16 +324,19 @@ MonoBehaviour:
     keyToPress: 114
     keyUpSprite: {fileID: 5450837733094888678, guid: 61acbb2ae99b341e98f1ded5e04d13ab, type: 3}
     keyDownSprite: {fileID: 8378731019718038223, guid: 61acbb2ae99b341e98f1ded5e04d13ab, type: 3}
+    phaseType: 0
   - instruction: Hold
     duration: 7
     keyToPress: 102
     keyUpSprite: {fileID: -4657369681490478202, guid: 61acbb2ae99b341e98f1ded5e04d13ab, type: 3}
     keyDownSprite: {fileID: 5401082568648363720, guid: 61acbb2ae99b341e98f1ded5e04d13ab, type: 3}
+    phaseType: 1
   - instruction: Exhale
     duration: 8
     keyToPress: 118
     keyUpSprite: {fileID: 2049701446520355930, guid: 61acbb2ae99b341e98f1ded5e04d13ab, type: 3}
     keyDownSprite: {fileID: -4081626459705900336, guid: 61acbb2ae99b341e98f1ded5e04d13ab, type: 3}
+    phaseType: 0
   keyAnimationSpeed: 0.3
   stressValue: {fileID: 11400000, guid: 280622f6a63aa4545bd8bfe8b972cf14, type: 2}
   stressTickRate: 0.5

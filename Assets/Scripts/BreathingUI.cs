@@ -3,6 +3,12 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
+public enum BreathingPhaseType
+{
+    Tap,
+    Hold
+}
+
 [System.Serializable]
 public class BreathingPhase
 {
@@ -11,6 +17,7 @@ public class BreathingPhase
     public KeyCode keyToPress;
     public Sprite keyUpSprite;
     public Sprite keyDownSprite;
+    public BreathingPhaseType phaseType = BreathingPhaseType.Hold;
 }
 
 public class BreathingUI : MonoBehaviour
@@ -86,19 +93,31 @@ public class BreathingUI : MonoBehaviour
             if (progressBar != null)
                 progressBar.fillAmount = 1f - (timer / phase.duration);
 
-            // Every stressTickRate seconds, adjust stress
+            bool correctInput = false;
+
+            if (phase.phaseType == BreathingPhaseType.Hold)
+            {
+                // Player must hold key
+                correctInput = Input.GetKey(phase.keyToPress);
+            }
+            else if (phase.phaseType == BreathingPhaseType.Tap)
+            {
+                // Player taps key at least once
+                correctInput = Input.GetKeyDown(phase.keyToPress);
+            }
+
+            // Apply stress changes every stressTickRate seconds
             if (stressTickTimer >= stressTickRate)
             {
                 stressTickTimer = 0f;
-
-                if (Input.GetKey(phase.keyToPress))
-                    stressValue.Decrease(0.05f);  // ✅ Reduce stress
+                if (correctInput)
+                    stressValue.Decrease(0.05f);
                 else
-                    stressValue.Increase(0.05f);  // 😬 Increase stress
+                    stressValue.Increase(0.05f);
             }
 
-            // Handle key sprite and tick animation
-            if (Input.GetKey(phase.keyToPress))
+            // Update key sprite and tick
+            if (correctInput)
             {
                 if (_keyAnimationCoroutine != null)
                 {
@@ -107,7 +126,6 @@ public class BreathingUI : MonoBehaviour
                 }
 
                 keySpriteImage.sprite = phase.keyDownSprite;
-
                 tickDisplayImage.sprite = correctTickSprite;
                 tickDisplayImage.gameObject.SetActive(true);
             }
@@ -128,6 +146,8 @@ public class BreathingUI : MonoBehaviour
             _keyAnimationCoroutine = null;
         }
 
+        keySpriteImage.sprite = phase.keyUpSprite;
+        tickDisplayImage.gameObject.SetActive(false);
         timerText.text = "0";
         if (progressBar != null) progressBar.fillAmount = 1f;
     }
