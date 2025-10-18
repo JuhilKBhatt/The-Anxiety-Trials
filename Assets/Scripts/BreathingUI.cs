@@ -6,11 +6,11 @@ using UnityEngine.UI;
 [System.Serializable]
 public class BreathingPhase
 {
-    public string instruction;      
-    public float duration = 4f;     
-    public KeyCode keyToPress;      
-    public Sprite keyUpSprite;      
-    public Sprite keyDownSprite;    
+    public string instruction;
+    public float duration = 4f;
+    public KeyCode keyToPress;
+    public Sprite keyUpSprite;
+    public Sprite keyDownSprite;
 }
 
 public class BreathingUI : MonoBehaviour
@@ -28,6 +28,8 @@ public class BreathingUI : MonoBehaviour
     [SerializeField] private float keyAnimationSpeed = 0.3f;
 
     [Header("Stress Integration")]
+    [Tooltip("Reference to the shared StressValue ScriptableObject.")]
+    [SerializeField] private StressValue stressValue;
     [Tooltip("How often (in seconds) to increase or decrease stress.")]
     [SerializeField] private float stressTickRate = 0.5f;
 
@@ -37,7 +39,13 @@ public class BreathingUI : MonoBehaviour
     {
         if (breathingPhases == null || breathingPhases.Length == 0)
         {
-            Debug.LogError("BreathingUI: No breathing phases have been set up in the Inspector!");
+            Debug.LogError("BreathingUI: No breathing phases have been set up!");
+            return;
+        }
+
+        if (stressValue == null)
+        {
+            Debug.LogError("BreathingUI: Missing StressValue ScriptableObject reference!");
             return;
         }
 
@@ -68,6 +76,7 @@ public class BreathingUI : MonoBehaviour
 
         float timer = phase.duration;
         float stressTickTimer = 0f;
+
         while (timer > 0f)
         {
             timer -= Time.deltaTime;
@@ -77,24 +86,18 @@ public class BreathingUI : MonoBehaviour
             if (progressBar != null)
                 progressBar.fillAmount = 1f - (timer / phase.duration);
 
+            // Every stressTickRate seconds, adjust stress
             if (stressTickTimer >= stressTickRate)
             {
-                stressTickTimer = 0f; // Reset the tick timer
+                stressTickTimer = 0f;
 
-                // ✨ Check if StressBar exists before trying to use it
-                if (StressBar.Instance != null)
-                {
-                    if (Input.GetKey(phase.keyToPress))
-                    {
-                        StressBar.Instance.DecreaseStress(); // User is doing it right
-                    }
-                    else
-                    {
-                        StressBar.Instance.IncreaseStress(); // User is missing the key
-                    }
-                }
+                if (Input.GetKey(phase.keyToPress))
+                    stressValue.Decrease(0.05f);  // ✅ Reduce stress
+                else
+                    stressValue.Increase(0.05f);  // 😬 Increase stress
             }
 
+            // Handle key sprite and tick animation
             if (Input.GetKey(phase.keyToPress))
             {
                 if (_keyAnimationCoroutine != null)
@@ -105,7 +108,6 @@ public class BreathingUI : MonoBehaviour
 
                 keySpriteImage.sprite = phase.keyDownSprite;
 
-                // ✅ Show tick sprite
                 tickDisplayImage.sprite = correctTickSprite;
                 tickDisplayImage.gameObject.SetActive(true);
             }

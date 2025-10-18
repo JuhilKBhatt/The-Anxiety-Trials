@@ -335,6 +335,8 @@ MonoBehaviour:
     keyUpSprite: {fileID: 2049701446520355930, guid: 61acbb2ae99b341e98f1ded5e04d13ab, type: 3}
     keyDownSprite: {fileID: -4081626459705900336, guid: 61acbb2ae99b341e98f1ded5e04d13ab, type: 3}
   keyAnimationSpeed: 0.3
+  stressValue: {fileID: 11400000, guid: 280622f6a63aa4545bd8bfe8b972cf14, type: 2}
+  stressTickRate: 0.5
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -2167,6 +2169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c48660e373134de783949aa4734e7e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stressValue: {fileID: 11400000, guid: 280622f6a63aa4545bd8bfe8b972cf14, type: 2}
   stressBarImage: {fileID: 595114683}
   stressSprites:
   - {fileID: -2276259661975475453, guid: fd884f90857334b529721b00f319164b, type: 3}
