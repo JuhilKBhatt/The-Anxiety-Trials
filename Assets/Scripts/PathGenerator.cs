@@ -11,17 +11,18 @@ public class PathGenerator : MonoBehaviour
     [SerializeField] private TileBase startTile;
     [SerializeField] private TileBase endTile;
     [SerializeField] private TileBase pathTile;
-    [SerializeField] private List<TileBase> detailTiles; // Decorative detail tiles
+    [SerializeField] private List<TileBase> detailTiles;
 
     [Header("Path Generation Settings")]
-    [SerializeField] private Vector2Int startPos = new Vector2Int(0, 0);
+    [SerializeField] private Vector2Int startPos = Vector2Int.zero;
     [SerializeField] private int pathLength = 50;
-    [SerializeField, Range(0f, 1f)] private float turnChance = 0.3f;
+    [SerializeField, Range(0f, 1f)] private float turnChance = 0.2f;
     [SerializeField, Range(0f, 1f)] private float detailChance = 0.15f;
     [SerializeField] private bool generateOnStart = true;
 
     [Header("Path Appearance")]
-    [SerializeField] private int pathWidth = 2; // how wide the path is
+    [SerializeField] private int pathWidth = 2;
+    [SerializeField] private int minTilesBetweenTurns = 3; // new
 
     [Header("Debug")]
     [SerializeField] private bool drawGizmos = true;
@@ -47,11 +48,12 @@ public class PathGenerator : MonoBehaviour
         worldPathPoints.Clear();
 
         Vector2Int currentPos = startPos;
-        Vector2Int direction = Vector2Int.right;
+        Vector2Int direction = Vector2Int.right; // initial direction
+        int tilesUntilNextTurn = minTilesBetweenTurns;
 
         for (int i = 0; i < pathLength; i++)
         {
-            // Choose the main tile based on position
+            // Select main tile
             TileBase mainTile = pathTile;
             if (i == 0 && startTile != null) mainTile = startTile;
             else if (i == pathLength - 1 && endTile != null) mainTile = endTile;
@@ -63,14 +65,14 @@ public class PathGenerator : MonoBehaviour
                 Vector2Int tilePos = currentPos + perpendicular * w;
                 pathTilemap.SetTile((Vector3Int)tilePos, mainTile);
 
-                // Maybe add detail tile
+                // Possibly add decorative detail
                 if (detailTiles.Count > 0 && Random.value < detailChance)
                 {
                     TileBase randomDetail = detailTiles[Random.Range(0, detailTiles.Count)];
                     pathTilemap.SetTile((Vector3Int)tilePos, randomDetail);
                 }
 
-                // Save center path point (for auto-follow) - only center
+                // Save center for auto-follow
                 if (w == 0)
                 {
                     Vector3 worldPos = pathTilemap.CellToWorld((Vector3Int)tilePos) + pathTilemap.tileAnchor;
@@ -78,25 +80,22 @@ public class PathGenerator : MonoBehaviour
                 }
             }
 
-            // Turn occasionally
-            float rand = Random.value;
-            if (rand < turnChance / 2f)
+            // Handle turning only if enough tiles have passed
+            if (tilesUntilNextTurn <= 0 && Random.value < turnChance)
             {
-                direction = Vector2Int.up;
-            }
-            else if (rand < turnChance)
-            {
-                direction = Vector2Int.down;
+                // Rotate left or right 90°
+                direction = Random.value < 0.5f ? new Vector2Int(-direction.y, direction.x) : new Vector2Int(direction.y, -direction.x);
+                tilesUntilNextTurn = minTilesBetweenTurns; // reset counter
             }
             else
             {
-                direction = Vector2Int.right;
+                tilesUntilNextTurn--;
             }
 
             currentPos += direction;
         }
 
-        Debug.Log($"✅ Path generated ({pathLength} tiles, width {pathWidth}).");
+        Debug.Log($"✅ Smooth Path generated ({pathLength} tiles, width {pathWidth}).");
     }
 
     private void OnDrawGizmos()

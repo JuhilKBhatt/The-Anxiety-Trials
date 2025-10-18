@@ -1906,11 +1906,12 @@ MonoBehaviour:
   pathTile: {fileID: 11400000, guid: 3edf053449c20441b98b38255abce4ac, type: 2}
   detailTiles: []
   startPos: {x: 0, y: 0}
-  pathLength: 200
-  turnChance: 0.25
+  pathLength: 300
+  turnChance: 0.08
   detailChance: 0
   generateOnStart: 1
   pathWidth: 1
+  minTilesBetweenTurns: 10
   drawGizmos: 1
 --- !u!1 &1718336854
 GameObject:
@@ -2119,8 +2120,8 @@ MonoBehaviour:
   - bottomTile: {fileID: 11400000, guid: 750f491d8394745d59b4329754e45f7f, type: 2}
     topTile: {fileID: 11400000, guid: e2ee36bff4a074ce3b25624ddbf0b363, type: 2}
   tallDecorationSpawnChance: 0.25
-  worldWidth: 350
-  worldHeight: 40
+  worldWidth: 250
+  worldHeight: 250
   generateOnStart: 1
 --- !u!114 &1731319063
 MonoBehaviour:
@@ -2183,7 +2184,6 @@ MonoBehaviour:
   spiritPrefab: {fileID: 2952223463144408158, guid: 7701f868afa134bef8a01155dbd2e253, type: 3}
   spawnParent: {fileID: 1434186262}
   orbitTarget: {fileID: 1074494641}
-  maxHealth: 1
   maxSpirits: 5
   globalStressValue: {fileID: 11400000, guid: 280622f6a63aa4545bd8bfe8b972cf14, type: 2}
   minSpawnRate: 5
