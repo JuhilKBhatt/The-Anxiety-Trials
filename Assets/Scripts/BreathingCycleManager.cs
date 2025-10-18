@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 using TMPro;
 
 public class BreathingCycleManager : MonoBehaviour
@@ -88,10 +89,14 @@ public class BreathingCycleManager : MonoBehaviour
             {
                 holdTimer += Time.deltaTime;
 
-                if (torch.IsPointingAtTag())
+                List<GameObject> detectedSpirits = torch.GetObjectsInCone();
+
+                if (detectedSpirits.Count > 0)
                 {
-                    // Damage the spirit through the manager
-                    spiritManager.DamageSpirit(0.5f * Time.deltaTime);
+                    foreach (var spirit in detectedSpirits)
+                    {
+                        spiritManager.DamageSpirit(spirit, 0.5f * Time.deltaTime);
+                    }
                     masteryProgress += Time.deltaTime;
                 }
                 else

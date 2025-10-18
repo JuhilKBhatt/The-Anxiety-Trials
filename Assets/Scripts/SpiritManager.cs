@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SpiritManager : MonoBehaviour
@@ -6,75 +7,77 @@ public class SpiritManager : MonoBehaviour
     [SerializeField] private GameObject spiritPrefab;
     [SerializeField] private Transform spawnParent;
     [SerializeField] private Transform orbitTarget; // Usually the player
-    [SerializeField] private float maxHealth = 100f;
+    [SerializeField] private float maxHealth = 1f;
+    [SerializeField] private int maxSpirits = 5;
 
-    private GameObject currentSpirit;
-    private SpiritHealthBar currentHealthBar;
-    private float currentHealth;
+    [Header("Stress Integration")]
+    [SerializeField] private StressValue globalStressValue; // ScriptableObject
+
+    [Header("Spawn Rate (seconds)")]
+    [SerializeField] private float minSpawnRate = 5f; // at low stress
+    [SerializeField] private float maxSpawnRate = 1f; // at high stress
 
     [Header("Debug")]
     [SerializeField] private bool debugLogs = true;
 
-    private void Start()
+    private List<GameObject> activeSpirits = new List<GameObject>();
+    private float spawnTimer = 0f;
+
+    private void Update()
     {
-        SpawnSpirit();
+        if (globalStressValue == null || spiritPrefab == null || orbitTarget == null)
+            return;
+
+        spawnTimer -= Time.deltaTime;
+
+        float currentSpawnRate = Mathf.Lerp(minSpawnRate, maxSpawnRate, globalStressValue.value);
+
+        if (spawnTimer <= 0f && activeSpirits.Count < maxSpirits)
+        {
+            SpawnSpirit();
+            spawnTimer = currentSpawnRate;
+        }
     }
 
     public void SpawnSpirit()
     {
-        if (spiritPrefab == null)
-        {
-            Debug.LogError("SpiritManager: No Spirit prefab assigned!");
-            return;
-        }
+        GameObject newSpirit = Instantiate(spiritPrefab, spawnParent);
 
-        if (currentSpirit != null)
-            Destroy(currentSpirit);
-
-        currentSpirit = Instantiate(spiritPrefab, spawnParent);
-
-        // Set orbit center
-        SpiritMovement movement = currentSpirit.GetComponent<SpiritMovement>();
+        // Set orbit target
+        SpiritMovement movement = newSpirit.GetComponent<SpiritMovement>();
         if (movement != null)
             movement.centerTarget = orbitTarget;
 
-        // Grab health bar (must be child of spirit prefab)
-        currentHealthBar = currentSpirit.GetComponentInChildren<SpiritHealthBar>();
+        // Initialize health
+        SpiritHealthBar healthBar = newSpirit.GetComponentInChildren<SpiritHealthBar>();
+        if (healthBar != null)
+            healthBar.UpdateHealthBar(1f);
 
-        currentHealth = maxHealth;
-        if (currentHealthBar != null)
-            currentHealthBar.UpdateHealthBar(1f);
+        activeSpirits.Add(newSpirit);
 
         if (debugLogs)
-            Debug.Log("Spawned new Spirit.");
+            Debug.Log($"Spawned Spirit. Total spirits: {activeSpirits.Count}");
     }
 
-    public bool DamageSpirit(float amount)
+    public void DamageSpirit(GameObject spirit, float amount)
     {
-        if (currentSpirit == null)
-            return false;
+        if (spirit == null || !activeSpirits.Contains(spirit))
+            return;
 
-        currentHealth -= amount;
-        currentHealth = Mathf.Max(currentHealth, 0f);
-
-        // Update visual health bar
-        if (currentHealthBar != null)
-            currentHealthBar.UpdateHealthBar(currentHealth / maxHealth);
-
-        if (debugLogs)
-            Debug.Log($"Spirit health: {currentHealth}/{maxHealth}");
-
-        if (currentHealth <= 0f)
+        SpiritHealthBar healthBar = spirit.GetComponentInChildren<SpiritHealthBar>();
+        if (healthBar != null)
         {
-            if (debugLogs)
-                Debug.Log("Spirit died. Respawning...");
-            SpawnSpirit();
-            return true;
+            float currentHealth = healthBar.CurrentHealth; // We'll add this property in SpiritHealthBar
+            currentHealth -= amount;
+            healthBar.UpdateHealthBar(currentHealth);
+            if (currentHealth <= 0f)
+            {
+                activeSpirits.Remove(spirit);
+                Destroy(spirit);
+                if (debugLogs) Debug.Log("Spirit destroyed due to 0 health");
+            }
         }
-
-        return false;
     }
 
-    public GameObject GetSpirit() => currentSpirit;
-    public float GetHealth() => currentHealth;
+    public List<GameObject> GetActiveSpirits() => activeSpirits;
 }

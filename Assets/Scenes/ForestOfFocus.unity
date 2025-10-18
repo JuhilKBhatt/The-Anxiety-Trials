@@ -599,7 +599,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -350, y: 0}
+  m_AnchoredPosition: {x: -330, y: 0}
   m_SizeDelta: {x: 320, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &595114683
@@ -2184,6 +2184,10 @@ MonoBehaviour:
   spawnParent: {fileID: 1434186262}
   orbitTarget: {fileID: 1074494641}
   maxHealth: 1
+  maxSpirits: 5
+  globalStressValue: {fileID: 11400000, guid: 280622f6a63aa4545bd8bfe8b972cf14, type: 2}
+  minSpawnRate: 5
+  maxSpawnRate: 1
   debugLogs: 1
 --- !u!1 &1817330151
 GameObject:

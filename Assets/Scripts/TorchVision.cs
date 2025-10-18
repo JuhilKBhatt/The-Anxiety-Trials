@@ -134,4 +134,30 @@ public class TorchVision : MonoBehaviour
         Gizmos.DrawLine(transform.position, transform.position + leftDir);
         Gizmos.DrawLine(transform.position, transform.position + rightDir);
     }
+
+    /// <summary>
+    /// Returns a list of all objects with detectable tags inside the torch cone.
+    /// </summary>
+    public List<GameObject> GetObjectsInCone()
+    {
+        List<GameObject> detected = new List<GameObject>();
+
+        float radius = torchLight.pointLightOuterRadius;
+        float coneAngle = torchLight.pointLightOuterAngle * 0.5f;
+
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius, detectionMask);
+        foreach (Collider2D hit in hits)
+        {
+            if (!HasDetectableTag(hit.gameObject))
+                continue;
+
+            Vector2 dirToTarget = (hit.transform.position - transform.position).normalized;
+            float angle = Vector2.Angle(transform.up, dirToTarget);
+
+            if (angle <= coneAngle)
+                detected.Add(hit.gameObject);
+        }
+
+        return detected;
+    }
 }
