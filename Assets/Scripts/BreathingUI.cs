@@ -19,13 +19,17 @@ public class BreathingUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI instructionText;
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private Image progressBar;
-    [SerializeField] private Image keySpriteImage;       // shows key up/down state
-    [SerializeField] private Image tickDisplayImage;     // shows the tick when correct
-    [SerializeField] private Sprite correctTickSprite;   // ✅ sprite for green tick
+    [SerializeField] private Image keySpriteImage;
+    [SerializeField] private Image tickDisplayImage;
+    [SerializeField] private Sprite correctTickSprite;
 
     [Header("Breathing Phases")]
     [SerializeField] private BreathingPhase[] breathingPhases;
     [SerializeField] private float keyAnimationSpeed = 0.3f;
+
+    [Header("Stress Integration")]
+    [Tooltip("How often (in seconds) to increase or decrease stress.")]
+    [SerializeField] private float stressTickRate = 0.5f;
 
     private Coroutine _keyAnimationCoroutine;
 
@@ -63,13 +67,33 @@ public class BreathingUI : MonoBehaviour
         _keyAnimationCoroutine = StartCoroutine(AnimateKeyPrompt(phase));
 
         float timer = phase.duration;
+        float stressTickTimer = 0f;
         while (timer > 0f)
         {
             timer -= Time.deltaTime;
+            stressTickTimer += Time.deltaTime;
             timerText.text = Mathf.Ceil(timer).ToString();
 
             if (progressBar != null)
                 progressBar.fillAmount = 1f - (timer / phase.duration);
+
+            if (stressTickTimer >= stressTickRate)
+            {
+                stressTickTimer = 0f; // Reset the tick timer
+
+                // ✨ Check if StressBar exists before trying to use it
+                if (StressBar.Instance != null)
+                {
+                    if (Input.GetKey(phase.keyToPress))
+                    {
+                        StressBar.Instance.DecreaseStress(); // User is doing it right
+                    }
+                    else
+                    {
+                        StressBar.Instance.IncreaseStress(); // User is missing the key
+                    }
+                }
+            }
 
             if (Input.GetKey(phase.keyToPress))
             {
