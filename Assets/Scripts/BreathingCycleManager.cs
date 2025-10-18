@@ -7,11 +7,8 @@ public class BreathingCycleManager : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private AutoFollower playerFollower;
-    [SerializeField] private SpiritMovement spirit;
     [SerializeField] private GameObject torchPrefab;
     [SerializeField] private Transform torchParent;
-    [SerializeField] private GameObject spiritPrefab;  // 👈 new: assign your Spirit prefab here
-    [SerializeField] private Transform spiritSpawnParent; // optional, if you want a parent for spirits
 
     [Header("Breathing Timings (seconds)")]
     [SerializeField] private float inhaleTime = 4f;
@@ -36,13 +33,13 @@ public class BreathingCycleManager : MonoBehaviour
 
     private void Start()
     {
-        // Spawn torch prefab
+        // Spawn or find Torch
         if (torchPrefab != null && torchParent != null)
         {
             GameObject torchInstance = Instantiate(torchPrefab, torchParent);
             torch = torchInstance.GetComponent<TorchVision>();
             if (torch == null)
-                Debug.LogError("Torch prefab missing TorchVision component!");
+                Debug.LogError("Torch prefab is missing a TorchVision component!");
         }
         else
         {
@@ -54,16 +51,16 @@ public class BreathingCycleManager : MonoBehaviour
             }
         }
 
-        if (playerFollower == null || spirit == null)
+        if (playerFollower == null)
         {
-            Debug.LogError("Missing required references!");
+            Debug.LogError("Missing AutoFollower reference!");
             return;
         }
 
+        // Initialize UI
         if (progressBar != null) progressBar.value = 0f;
         if (statusText != null) statusText.text = "";
 
-        spirit.gameObject.SetActive(false);
         breathingRoutine = StartCoroutine(BreathingCycle());
     }
 
@@ -71,57 +68,38 @@ public class BreathingCycleManager : MonoBehaviour
     {
         while (!gameEnded)
         {
-            // ---------------- INHALE ----------------
+            // --- INHALE ---
             if (debugLogs) Debug.Log("Inhale");
             playerFollower.StartAutoFollow();
-            spirit.gameObject.SetActive(false);
-            if (statusText != null) statusText.text = "";
+            if (statusText != null) statusText.text = "Inhale...";
             yield return WaitOrBreak(inhaleTime);
 
             if (gameEnded) yield break;
 
-            // ---------------- HOLD ----------------
+            // --- HOLD ---
             if (debugLogs) Debug.Log("Hold");
             playerFollower.StopAutoFollow();
-            spirit.gameObject.SetActive(true);
-            if (statusText != null) statusText.text = "Point at the Spirit";
+            if (statusText != null) statusText.text = "Hold... focus your torch.";
 
             float holdTimer = 0f;
             while (holdTimer < holdTime && !gameEnded)
             {
                 holdTimer += Time.deltaTime;
 
-                if (torch != null && torch.IsPointingAt(spirit.transform))
-                {
-                    SpiritHealthBar spiritHealth = spirit.GetComponentInChildren<SpiritHealthBar>();
-                    if (spiritHealth != null)
-                    {
-                        spiritHealth.TakeDamage(0.15f);
-
-                        if (spiritHealth.IsDead)
-                        {
-                            Destroy(spirit.gameObject);
-                            SpawnNewSpirit();
-                            continue;
-                        }
-                    }
-
+                if (torch.IsPointingAtTag())
                     masteryProgress += Time.deltaTime;
-                    if (progressBar != null)
-                        progressBar.value = Mathf.Clamp01(masteryProgress / masteryTime);
-
-                    if (masteryProgress >= masteryTime)
-                    {
-                        masteryProgress = masteryTime;
-                        BreathingMastered();
-                    }
-                }
                 else
-                {
                     masteryProgress -= Time.deltaTime * 0.25f;
-                    masteryProgress = Mathf.Max(0f, masteryProgress);
-                    if (progressBar != null)
-                        progressBar.value = Mathf.Clamp01(masteryProgress / masteryTime);
+
+                masteryProgress = Mathf.Clamp(masteryProgress, 0f, masteryTime);
+
+                if (progressBar != null)
+                    progressBar.value = Mathf.Clamp01(masteryProgress / masteryTime);
+
+                if (masteryProgress >= masteryTime)
+                {
+                    BreathingMastered();
+                    yield break;
                 }
 
                 yield return null;
@@ -129,32 +107,12 @@ public class BreathingCycleManager : MonoBehaviour
 
             if (gameEnded) yield break;
 
-            // ---------------- EXHALE ----------------
+            // --- EXHALE ---
             if (debugLogs) Debug.Log("Exhale");
-            spirit.gameObject.SetActive(false);
             playerFollower.StartAutoFollow();
-            if (statusText != null) statusText.text = "";
+            if (statusText != null) statusText.text = "Exhale...";
             yield return WaitOrBreak(exhaleTime);
         }
-    }
-
-    private void SpawnNewSpirit()
-    {
-        if (spiritPrefab == null)
-        {
-            Debug.LogError("Spirit prefab not assigned!");
-            return;
-        }
-
-        // Instantiate new Spirit prefab
-        GameObject newSpiritObj = Instantiate(spiritPrefab, spiritSpawnParent);
-        spirit = newSpiritObj.GetComponent<SpiritMovement>();
-
-        // Reassign its orbit target (usually the player)
-        if (playerFollower != null)
-            spirit.centerTarget = playerFollower.transform;
-
-        if (debugLogs) Debug.Log("Spawned a new Spirit prefab.");
     }
 
     private void BreathingMastered()
@@ -166,10 +124,9 @@ public class BreathingCycleManager : MonoBehaviour
             StopCoroutine(breathingRoutine);
 
         playerFollower.StopAutoFollow();
-        spirit.gameObject.SetActive(false);
 
         if (statusText != null)
-            statusText.text = "Breathing Mastered - End of Game ";
+            statusText.text = "Breathing Mastered - End of Game";
 
         Debug.Log("Breathing Mastered! Game stopped.");
     }

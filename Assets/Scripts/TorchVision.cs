@@ -24,6 +24,7 @@ public class TorchVision : MonoBehaviour
         if (TrackMouse)
             RotateTorchTowardsMouse();
 
+        // Optional: detect objects in light cone every frame
         DetectObjectsInLightCone();
     }
 
@@ -50,12 +51,12 @@ public class TorchVision : MonoBehaviour
                 continue;
 
             Vector2 dirToTarget = (hit.transform.position - transform.position).normalized;
-            Vector2 facingDir = transform.up; // always uses current rotation
+            float angle = Vector2.Angle(transform.up, dirToTarget);
 
-            float angle = Vector2.Angle(facingDir, dirToTarget);
             if (angle <= coneAngle)
             {
-                // Do something with the detected object
+                // Currently detected object is inside cone
+                // You can add visual effects, log, or pass info to other scripts
             }
         }
     }
@@ -64,8 +65,50 @@ public class TorchVision : MonoBehaviour
     {
         foreach (string tag in detectableTags)
         {
-            if (obj.CompareTag(tag)) return true;
+            if (obj.CompareTag(tag))
+                return true;
         }
+        return false;
+    }
+
+    /// <summary>
+    /// Returns true if the torch is pointing at the given Transform
+    /// within its light cone.
+    /// </summary>
+    public bool IsPointingAt(Transform target)
+    {
+        if (target == null) return false;
+
+        float radius = torchLight.pointLightOuterRadius;
+        float coneAngle = torchLight.pointLightOuterAngle * 0.5f;
+
+        Vector2 dirToTarget = (target.position - transform.position).normalized;
+        float angle = Vector2.Angle(transform.up, dirToTarget);
+
+        return Vector2.Distance(transform.position, target.position) <= radius && angle <= coneAngle;
+    }
+
+    /// <summary>
+    /// Returns true if the torch is pointing at any object with a detectable tag.
+    /// </summary>
+    public bool IsPointingAtTag()
+    {
+        float radius = torchLight.pointLightOuterRadius;
+        float coneAngle = torchLight.pointLightOuterAngle * 0.5f;
+
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius, detectionMask);
+        foreach (Collider2D hit in hits)
+        {
+            if (!HasDetectableTag(hit.gameObject))
+                continue;
+
+            Vector2 dirToTarget = (hit.transform.position - transform.position).normalized;
+            float angle = Vector2.Angle(transform.up, dirToTarget);
+
+            if (angle <= coneAngle)
+                return true;
+        }
+
         return false;
     }
 
@@ -80,7 +123,6 @@ public class TorchVision : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, radius);
 
-        // Visualize cone
         Vector3 facingDir = transform.up * radius;
         Quaternion leftRot = Quaternion.AngleAxis(-coneAngle, Vector3.forward);
         Quaternion rightRot = Quaternion.AngleAxis(coneAngle, Vector3.forward);
@@ -91,17 +133,5 @@ public class TorchVision : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position, transform.position + leftDir);
         Gizmos.DrawLine(transform.position, transform.position + rightDir);
-    }
-    
-    public bool IsPointingAt(Transform target)
-    {
-        float radius = torchLight.pointLightOuterRadius;
-        float coneAngle = torchLight.pointLightOuterAngle * 0.5f;
-
-        Vector2 dirToTarget = (target.position - transform.position).normalized;
-        Vector2 facingDir = transform.up;
-        float angle = Vector2.Angle(facingDir, dirToTarget);
-
-        return Vector2.Distance(transform.position, target.position) <= radius && angle <= coneAngle;
     }
 }
