@@ -319,7 +319,7 @@ MonoBehaviour:
   tickDisplayImage: {fileID: 978445281}
   correctTickSprite: {fileID: -1591902573, guid: 3ffb7400516444aa4a94848956040672, type: 3}
   breathingPhases:
-  - instruction: Inhale
+  - instruction: Tap
     duration: 4
     keyToPress: 114
     keyUpSprite: {fileID: 5450837733094888678, guid: 61acbb2ae99b341e98f1ded5e04d13ab, type: 3}
@@ -331,7 +331,7 @@ MonoBehaviour:
     keyUpSprite: {fileID: -4657369681490478202, guid: 61acbb2ae99b341e98f1ded5e04d13ab, type: 3}
     keyDownSprite: {fileID: 5401082568648363720, guid: 61acbb2ae99b341e98f1ded5e04d13ab, type: 3}
     phaseType: 1
-  - instruction: Exhale
+  - instruction: Tap
     duration: 8
     keyToPress: 118
     keyUpSprite: {fileID: 2049701446520355930, guid: 61acbb2ae99b341e98f1ded5e04d13ab, type: 3}

@@ -84,6 +84,9 @@ public class BreathingUI : MonoBehaviour
         float timer = phase.duration;
         float stressTickTimer = 0f;
 
+        // For tap phases, track if key was tapped in this tick interval
+        bool tappedThisTick = false;
+
         while (timer > 0f)
         {
             timer -= Time.deltaTime;
@@ -97,27 +100,47 @@ public class BreathingUI : MonoBehaviour
 
             if (phase.phaseType == BreathingPhaseType.Hold)
             {
-                // Player must hold key
+                // Must hold key continuously
                 correctInput = Input.GetKey(phase.keyToPress);
             }
             else if (phase.phaseType == BreathingPhaseType.Tap)
             {
-                // Player taps key at least once
-                correctInput = Input.GetKeyDown(phase.keyToPress);
+                // Check if key was tapped this frame
+                if (Input.GetKeyDown(phase.keyToPress))
+                    tappedThisTick = true;
+
+                // Only count as correct input if tapped in this tick interval
+                if (stressTickTimer >= stressTickRate)
+                {
+                    correctInput = tappedThisTick;
+                    tappedThisTick = false; // reset for next interval
+                }
             }
 
             // Apply stress changes every stressTickRate seconds
             if (stressTickTimer >= stressTickRate)
             {
                 stressTickTimer = 0f;
-                if (correctInput)
-                    stressValue.Decrease(0.05f);
-                else
-                    stressValue.Increase(0.05f);
+
+                if (phase.phaseType == BreathingPhaseType.Tap)
+                {
+                    if (correctInput)
+                        stressValue.Decrease(0.05f);
+                    else
+                        stressValue.Increase(0.05f);
+                }
+                else // hold phases
+                {
+                    if (correctInput)
+                        stressValue.Decrease(0.05f);
+                    else
+                        stressValue.Increase(0.05f);
+                }
             }
 
             // Update key sprite and tick
-            if (correctInput)
+            if ((phase.phaseType == BreathingPhaseType.Hold && correctInput) ||
+                (phase.phaseType == BreathingPhaseType.Tap && tappedThisTick))
             {
                 if (_keyAnimationCoroutine != null)
                 {
