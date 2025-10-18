@@ -64,66 +64,75 @@ public class BreathingCycleManager : MonoBehaviour
         if (progressBar != null) progressBar.value = 0f;
         if (statusText != null) statusText.text = "";
 
+        // Ensure player keeps walking
+        playerFollower.StartAutoFollow();
+
         breathingRoutine = StartCoroutine(BreathingCycle());
     }
 
     private IEnumerator BreathingCycle()
     {
-        // Ensure player is always following
-        playerFollower.StartAutoFollow();
-
         while (!gameEnded)
         {
             // --- INHALE ---
             if (debugLogs) Debug.Log("Inhale");
             if (statusText != null) statusText.text = "Inhale...";
-            yield return WaitOrBreak(inhaleTime);
+            yield return StartCoroutine(PhaseRoutine(inhaleTime));
 
             if (gameEnded) yield break;
 
             // --- HOLD ---
             if (debugLogs) Debug.Log("Hold");
             if (statusText != null) statusText.text = "Hold... focus your torch.";
-
-            float holdTimer = 0f;
-            while (holdTimer < holdTime && !gameEnded)
-            {
-                holdTimer += Time.deltaTime;
-
-                List<GameObject> detectedSpirits = torch.GetObjectsInCone();
-
-                if (detectedSpirits.Count > 0)
-                {
-                    foreach (var spirit in detectedSpirits)
-                    {
-                        spiritManager.DamageSpirit(spirit, 0.5f * Time.deltaTime);
-                    }
-                    masteryProgress += Time.deltaTime;
-                }
-                else
-                {
-                    masteryProgress -= Time.deltaTime * 0.25f;
-                }
-
-                masteryProgress = Mathf.Clamp(masteryProgress, 0f, masteryTime);
-                if (progressBar != null)
-                    progressBar.value = Mathf.Clamp01(masteryProgress / masteryTime);
-
-                if (masteryProgress >= masteryTime)
-                {
-                    BreathingMastered();
-                    yield break;
-                }
-
-                yield return null;
-            }
+            yield return StartCoroutine(PhaseRoutine(holdTime));
 
             if (gameEnded) yield break;
 
             // --- EXHALE ---
             if (debugLogs) Debug.Log("Exhale");
             if (statusText != null) statusText.text = "Exhale...";
-            yield return WaitOrBreak(exhaleTime);
+            yield return StartCoroutine(PhaseRoutine(exhaleTime));
+        }
+    }
+
+    /// <summary>
+    /// Handles torching spirits and mastery progress during any breathing phase.
+    /// </summary>
+    private IEnumerator PhaseRoutine(float duration)
+    {
+        float timer = 0f;
+
+        while (timer < duration && !gameEnded)
+        {
+            timer += Time.deltaTime;
+
+            // Torch spirits every frame
+            List<GameObject> detectedSpirits = torch.GetObjectsInCone();
+            if (detectedSpirits.Count > 0)
+            {
+                foreach (var spirit in detectedSpirits)
+                {
+                    spiritManager.DamageSpirit(spirit, 0.5f * Time.deltaTime);
+                }
+                masteryProgress += Time.deltaTime;
+            }
+            else
+            {
+                masteryProgress -= Time.deltaTime * 0.25f;
+            }
+
+            masteryProgress = Mathf.Clamp(masteryProgress, 0f, masteryTime);
+
+            if (progressBar != null)
+                progressBar.value = Mathf.Clamp01(masteryProgress / masteryTime);
+
+            if (masteryProgress >= masteryTime)
+            {
+                BreathingMastered();
+                yield break;
+            }
+
+            yield return null;
         }
     }
 
@@ -141,15 +150,5 @@ public class BreathingCycleManager : MonoBehaviour
             statusText.text = "Breathing Mastered - End of Game";
 
         Debug.Log("Breathing Mastered! Game stopped.");
-    }
-
-    private IEnumerator WaitOrBreak(float seconds)
-    {
-        float t = 0f;
-        while (t < seconds && !gameEnded)
-        {
-            t += Time.deltaTime;
-            yield return null;
-        }
     }
 }
