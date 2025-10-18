@@ -5,6 +5,8 @@ using TMPro;
 
 public class BreathingCycleManager : MonoBehaviour
 {
+    [SerializeField] private SpiritManager spiritManager;
+
     [Header("References")]
     [SerializeField] private AutoFollower playerFollower;
     [SerializeField] private GameObject torchPrefab;
@@ -87,12 +89,17 @@ public class BreathingCycleManager : MonoBehaviour
                 holdTimer += Time.deltaTime;
 
                 if (torch.IsPointingAtTag())
+                {
+                    // Damage the spirit through the manager
+                    spiritManager.DamageSpirit(0.15f * Time.deltaTime); // scaled per second
                     masteryProgress += Time.deltaTime;
+                }
                 else
+                {
                     masteryProgress -= Time.deltaTime * 0.25f;
+                }
 
                 masteryProgress = Mathf.Clamp(masteryProgress, 0f, masteryTime);
-
                 if (progressBar != null)
                     progressBar.value = Mathf.Clamp01(masteryProgress / masteryTime);
 

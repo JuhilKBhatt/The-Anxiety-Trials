@@ -1166,17 +1166,6 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
---- !u!114 &804180680 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7966652192970037106, guid: 7701f868afa134bef8a01155dbd2e253, type: 3}
-  m_PrefabInstance: {fileID: 1923065562}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 240409690389e488dab6e44c96769710, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &965911205
 GameObject:
   m_ObjectHideFlags: 0
@@ -2071,6 +2060,7 @@ GameObject:
   - component: {fileID: 1731319062}
   - component: {fileID: 1731319063}
   - component: {fileID: 1731319064}
+  - component: {fileID: 1731319065}
   m_Layer: 0
   m_Name: SceneManager
   m_TagString: Untagged
@@ -2144,12 +2134,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f426990dd288f4153ab3bb7c1ea08425, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spiritManager: {fileID: 1731319065}
   playerFollower: {fileID: 1074494647}
-  spirit: {fileID: 804180680}
   torchPrefab: {fileID: 5971469950088585322, guid: 175b18db165ff45be964c98c1cf693c0, type: 3}
   torchParent: {fileID: 1434186262}
-  spiritPrefab: {fileID: 2952223463144408158, guid: 7701f868afa134bef8a01155dbd2e253, type: 3}
-  spiritSpawnParent: {fileID: 1434186262}
   inhaleTime: 4
   holdTime: 7
   exhaleTime: 8
@@ -2180,6 +2168,23 @@ MonoBehaviour:
   - {fileID: -2962639829586011719, guid: fd884f90857334b529721b00f319164b, type: 3}
   - {fileID: 7013541907120590525, guid: fd884f90857334b529721b00f319164b, type: 3}
   - {fileID: 3590649358251884346, guid: fd884f90857334b529721b00f319164b, type: 3}
+--- !u!114 &1731319065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1731319057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7422e3a86206f4438ab4bab471933889, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spiritPrefab: {fileID: 2952223463144408158, guid: 7701f868afa134bef8a01155dbd2e253, type: 3}
+  spawnParent: {fileID: 1434186262}
+  orbitTarget: {fileID: 1074494641}
+  maxHealth: 1
+  debugLogs: 1
 --- !u!1 &1817330151
 GameObject:
   m_ObjectHideFlags: 0
@@ -2255,71 +2260,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1817330151}
   m_CullTransparentMesh: 1
---- !u!1001 &1923065562
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1886353642411936466, guid: 7701f868afa134bef8a01155dbd2e253, type: 3}
-      propertyPath: maxHealth
-      value: 250
-      objectReference: {fileID: 0}
-    - target: {fileID: 2952223463144408158, guid: 7701f868afa134bef8a01155dbd2e253, type: 3}
-      propertyPath: m_Name
-      value: Spirit
-      objectReference: {fileID: 0}
-    - target: {fileID: 4123652908088876402, guid: 7701f868afa134bef8a01155dbd2e253, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4123652908088876402, guid: 7701f868afa134bef8a01155dbd2e253, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -1.9799805
-      objectReference: {fileID: 0}
-    - target: {fileID: 4123652908088876402, guid: 7701f868afa134bef8a01155dbd2e253, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4123652908088876402, guid: 7701f868afa134bef8a01155dbd2e253, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4123652908088876402, guid: 7701f868afa134bef8a01155dbd2e253, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4123652908088876402, guid: 7701f868afa134bef8a01155dbd2e253, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4123652908088876402, guid: 7701f868afa134bef8a01155dbd2e253, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4123652908088876402, guid: 7701f868afa134bef8a01155dbd2e253, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4123652908088876402, guid: 7701f868afa134bef8a01155dbd2e253, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4123652908088876402, guid: 7701f868afa134bef8a01155dbd2e253, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7966652192970037106, guid: 7701f868afa134bef8a01155dbd2e253, type: 3}
-      propertyPath: centerTarget
-      value: 
-      objectReference: {fileID: 1074494641}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 7701f868afa134bef8a01155dbd2e253, type: 3}
 --- !u!1 &2000805861
 GameObject:
   m_ObjectHideFlags: 0
@@ -2506,7 +2446,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 619394802}
-  - {fileID: 1923065562}
   - {fileID: 1632465586}
   - {fileID: 7915096913466944133}
   - {fileID: 1731319058}
