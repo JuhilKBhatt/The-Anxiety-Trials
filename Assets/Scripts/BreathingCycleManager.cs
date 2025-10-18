@@ -69,11 +69,13 @@ public class BreathingCycleManager : MonoBehaviour
 
     private IEnumerator BreathingCycle()
     {
+        // Ensure player is always following
+        playerFollower.StartAutoFollow();
+
         while (!gameEnded)
         {
             // --- INHALE ---
             if (debugLogs) Debug.Log("Inhale");
-            playerFollower.StartAutoFollow();
             if (statusText != null) statusText.text = "Inhale...";
             yield return WaitOrBreak(inhaleTime);
 
@@ -81,7 +83,6 @@ public class BreathingCycleManager : MonoBehaviour
 
             // --- HOLD ---
             if (debugLogs) Debug.Log("Hold");
-            playerFollower.StopAutoFollow();
             if (statusText != null) statusText.text = "Hold... focus your torch.";
 
             float holdTimer = 0f;
@@ -121,7 +122,6 @@ public class BreathingCycleManager : MonoBehaviour
 
             // --- EXHALE ---
             if (debugLogs) Debug.Log("Exhale");
-            playerFollower.StartAutoFollow();
             if (statusText != null) statusText.text = "Exhale...";
             yield return WaitOrBreak(exhaleTime);
         }
