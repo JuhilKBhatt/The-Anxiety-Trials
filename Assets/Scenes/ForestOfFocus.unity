@@ -575,7 +575,7 @@ GameObject:
   - component: {fileID: 595114684}
   - component: {fileID: 595114683}
   m_Layer: 5
-  m_Name: Image
+  m_Name: StressBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2068,6 +2068,7 @@ GameObject:
   - component: {fileID: 1731319058}
   - component: {fileID: 1731319062}
   - component: {fileID: 1731319063}
+  - component: {fileID: 1731319064}
   m_Layer: 0
   m_Name: SceneManager
   m_TagString: Untagged
@@ -2154,6 +2155,28 @@ MonoBehaviour:
   statusText: {fileID: 1718336856}
   masteryTime: 20
   debugLogs: 1
+--- !u!114 &1731319064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1731319057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c48660e373134de783949aa4734e7e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stressBarImage: {fileID: 595114683}
+  stressSprites:
+  - {fileID: -2276259661975475453, guid: fd884f90857334b529721b00f319164b, type: 3}
+  - {fileID: -1484026811230398171, guid: fd884f90857334b529721b00f319164b, type: 3}
+  - {fileID: -302528608544233904, guid: fd884f90857334b529721b00f319164b, type: 3}
+  - {fileID: 3598116612191208058, guid: fd884f90857334b529721b00f319164b, type: 3}
+  - {fileID: 6633905310519058068, guid: fd884f90857334b529721b00f319164b, type: 3}
+  - {fileID: -2962639829586011719, guid: fd884f90857334b529721b00f319164b, type: 3}
+  - {fileID: 7013541907120590525, guid: fd884f90857334b529721b00f319164b, type: 3}
+  - {fileID: 3590649358251884346, guid: fd884f90857334b529721b00f319164b, type: 3}
 --- !u!1 &1817330151
 GameObject:
   m_ObjectHideFlags: 0
