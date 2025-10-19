@@ -13,6 +13,13 @@ public class BreathingCycleManager : MonoBehaviour
     [SerializeField] private GameObject torchPrefab;
     [SerializeField] private Transform torchParent;
 
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip breathingClip;
+    [SerializeField] private float inhaleStart = 0f;
+    [SerializeField] private float inhaleEnd = 2f;
+    [SerializeField] private float exhaleStart = 2f;
+    [SerializeField] private float exhaleEnd = 4.5f;
+
     [Header("Breathing Timings (seconds)")]
     [SerializeField] private float inhaleTime = 4f;
     [SerializeField] private float holdTime = 7f;
@@ -33,6 +40,8 @@ public class BreathingCycleManager : MonoBehaviour
     private float masteryProgress = 0f;
     private bool gameEnded = false;
     private Coroutine breathingRoutine;
+    private AudioSource audioSource;
+    private Coroutine audioRoutine;
 
     private void Start()
     {
@@ -64,7 +73,13 @@ public class BreathingCycleManager : MonoBehaviour
         if (progressBar != null) progressBar.value = 0f;
         if (statusText != null) statusText.text = "";
 
-        // Ensure player keeps walking
+        // Setup audio
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.clip = breathingClip;
+        audioSource.loop = false;
+        audioSource.playOnAwake = false;
+
+        // Start following
         playerFollower.StartAutoFollow();
 
         breathingRoutine = StartCoroutine(BreathingCycle());
@@ -77,6 +92,7 @@ public class BreathingCycleManager : MonoBehaviour
             // --- INHALE ---
             if (debugLogs) Debug.Log("Inhale");
             if (statusText != null) statusText.text = "Inhale...";
+            PlayAudioSegment(inhaleStart, inhaleEnd);
             yield return StartCoroutine(PhaseRoutine(inhaleTime));
 
             if (gameEnded) yield break;
@@ -84,6 +100,7 @@ public class BreathingCycleManager : MonoBehaviour
             // --- HOLD ---
             if (debugLogs) Debug.Log("Hold");
             if (statusText != null) statusText.text = "Hold... focus your torch.";
+            StopAudio();
             yield return StartCoroutine(PhaseRoutine(holdTime));
 
             if (gameEnded) yield break;
@@ -91,13 +108,11 @@ public class BreathingCycleManager : MonoBehaviour
             // --- EXHALE ---
             if (debugLogs) Debug.Log("Exhale");
             if (statusText != null) statusText.text = "Exhale...";
+            PlayAudioSegment(exhaleStart, exhaleEnd);
             yield return StartCoroutine(PhaseRoutine(exhaleTime));
         }
     }
 
-    /// <summary>
-    /// Handles torching spirits and mastery progress during any breathing phase.
-    /// </summary>
     private IEnumerator PhaseRoutine(float duration)
     {
         float timer = 0f;
@@ -145,10 +160,41 @@ public class BreathingCycleManager : MonoBehaviour
             StopCoroutine(breathingRoutine);
 
         playerFollower.StopAutoFollow();
+        StopAudio();
 
         if (statusText != null)
             statusText.text = "Breathing Mastered - End of Game";
 
         Debug.Log("Breathing Mastered! Game stopped.");
+    }
+
+    // --- AUDIO HELPERS ---
+
+    private void PlayAudioSegment(float startTime, float endTime)
+    {
+        if (audioSource == null || breathingClip == null) return;
+
+        StopAudio(); // Stop any previous playback
+        if (audioRoutine != null)
+            StopCoroutine(audioRoutine);
+        audioRoutine = StartCoroutine(PlaySegmentRoutine(startTime, endTime));
+    }
+
+    private IEnumerator PlaySegmentRoutine(float startTime, float endTime)
+    {
+        yield return null; // wait one frame to properly set the time
+        audioSource.time = startTime;
+        audioSource.Play();
+
+        float duration = Mathf.Clamp(endTime - startTime, 0f, breathingClip.length);
+        yield return new WaitForSeconds(duration);
+
+        StopAudio();
+    }
+
+    private void StopAudio()
+    {
+        if (audioSource != null && audioSource.isPlaying)
+            audioSource.Stop();
     }
 }
