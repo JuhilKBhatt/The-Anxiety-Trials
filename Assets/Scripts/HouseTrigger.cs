@@ -2,7 +2,17 @@ using UnityEngine;
 
 public class HouseTrigger : MonoBehaviour
 {
+    [Header("References")]
+    [SerializeField] private GameObject gameOverObject; // drag Canvas or panel
+
+    private GameOver gameOverScript;
     private bool triggered = false;
+
+    private void Awake()
+    {
+        if (gameOverScript == null)
+            gameOverScript = FindObjectOfType<GameOver>();
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -11,17 +21,14 @@ public class HouseTrigger : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             triggered = true;
-            Debug.Log("🏠 Player reached the house! Game over / level complete.");
 
-            // ✅ New Unity 6+ API
-            GameOver gameOver = FindFirstObjectByType<GameOver>();
-            if (gameOver != null)
+            if (gameOverScript != null)
             {
-                gameOver.ShowGameOver();
+                gameOverScript.ShowGameOver("🏠 You reached the house! Level Complete!");
             }
             else
             {
-                Debug.LogWarning("⚠️ No GameOver script found in the scene!");
+                Debug.LogWarning("⚠ GameOver script not found on assigned object!");
             }
         }
     }

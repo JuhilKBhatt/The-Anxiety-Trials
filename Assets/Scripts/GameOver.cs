@@ -1,13 +1,14 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 using System.Collections;
-using System.Collections.Generic;
 
 public class GameOver : MonoBehaviour
 {
     [Header("UI References")]
-    [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private GameObject gameOverPanel;  // Panel to show
+    [SerializeField] private TMP_Text messageText;      // Text to display custom message
     [SerializeField] private Button restartButton;
     [SerializeField] private Button quitButton;
 
@@ -22,29 +23,34 @@ public class GameOver : MonoBehaviour
             quitButton.onClick.AddListener(QuitGame);
     }
 
-    public void ShowGameOver()
+    /// <summary>
+    /// Show Game Over with a custom message
+    /// </summary>
+    public void ShowGameOver(string message)
     {
+        if (messageText != null)
+            messageText.text = message;
+
         if (gameOverPanel != null)
             gameOverPanel.SetActive(true);
 
-        Time.timeScale = 0f; // pause everything
-        Debug.Log("Game Over triggered!");
+        Time.timeScale = 0f;
+        Debug.Log("💀 Game Over: " + message);
     }
 
-    public void RestartGame()
+    private void RestartGame()
     {
-        // Make absolutely sure time scale is normal BEFORE loading
         StartCoroutine(RestartRoutine());
     }
 
     private IEnumerator RestartRoutine()
     {
-        Time.timeScale = 1f; // unpause
-        yield return null;   // wait one frame
+        Time.timeScale = 1f;
+        yield return null;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    public void QuitGame()
+    private void QuitGame()
     {
         Time.timeScale = 1f;
 #if UNITY_EDITOR
