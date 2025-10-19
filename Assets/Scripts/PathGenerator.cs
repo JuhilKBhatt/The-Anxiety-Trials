@@ -22,7 +22,11 @@ public class PathGenerator : MonoBehaviour
 
     [Header("Path Appearance")]
     [SerializeField] private int pathWidth = 2;
-    [SerializeField] private int minTilesBetweenTurns = 3; // new
+    [SerializeField] private int minTilesBetweenTurns = 3;
+
+    [Header("End Prefab Settings")]
+    [SerializeField] private GameObject housePrefab; // 🏠 assign your house prefab here
+    [SerializeField] private Transform houseParent;  // optional: where to parent the house
 
     [Header("Debug")]
     [SerializeField] private bool drawGizmos = true;
@@ -44,11 +48,19 @@ public class PathGenerator : MonoBehaviour
             return;
         }
 
+        // Clear old tiles and data
         pathTilemap.ClearAllTiles();
         worldPathPoints.Clear();
 
+        // Clear any existing house from previous generation
+        if (houseParent != null)
+        {
+            foreach (Transform child in houseParent)
+                DestroyImmediate(child.gameObject);
+        }
+
         Vector2Int currentPos = startPos;
-        Vector2Int direction = Vector2Int.right; // initial direction
+        Vector2Int direction = Vector2Int.right;
         int tilesUntilNextTurn = minTilesBetweenTurns;
 
         for (int i = 0; i < pathLength; i++)
@@ -72,7 +84,7 @@ public class PathGenerator : MonoBehaviour
                     pathTilemap.SetTile((Vector3Int)tilePos, randomDetail);
                 }
 
-                // Save center for auto-follow
+                // Save center for follower
                 if (w == 0)
                 {
                     Vector3 worldPos = pathTilemap.CellToWorld((Vector3Int)tilePos) + pathTilemap.tileAnchor;
@@ -83,9 +95,8 @@ public class PathGenerator : MonoBehaviour
             // Handle turning only if enough tiles have passed
             if (tilesUntilNextTurn <= 0 && Random.value < turnChance)
             {
-                // Rotate left or right 90°
                 direction = Random.value < 0.5f ? new Vector2Int(-direction.y, direction.x) : new Vector2Int(direction.y, -direction.x);
-                tilesUntilNextTurn = minTilesBetweenTurns; // reset counter
+                tilesUntilNextTurn = minTilesBetweenTurns;
             }
             else
             {
@@ -93,6 +104,14 @@ public class PathGenerator : MonoBehaviour
             }
 
             currentPos += direction;
+        }
+
+        if (housePrefab != null && worldPathPoints.Count > 0)
+        {
+            Vector3 endPosition = worldPathPoints[worldPathPoints.Count - 1];
+            GameObject house = Instantiate(housePrefab, endPosition, Quaternion.identity, houseParent);
+            house.name = "EndHouse";
+            Debug.Log($"🏠 Spawned house at end of path ({endPosition}).");
         }
 
         Debug.Log($"✅ Smooth Path generated ({pathLength} tiles, width {pathWidth}).");

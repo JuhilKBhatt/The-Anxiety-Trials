@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01a525a66d9fc451798ce3fb82c05dae, type: 3}
   m_Name: GlobalStressValue
   m_EditorClassIdentifier: 
-  value: 0.50000006
+  value: 1
