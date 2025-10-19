@@ -550,6 +550,7 @@ MonoBehaviour:
   keyAnimationSpeed: 0.3
   stressValue: {fileID: 11400000, guid: 280622f6a63aa4545bd8bfe8b972cf14, type: 2}
   stressTickRate: 0.5
+  stressChangeAmount: 0.05
 --- !u!1 &412923617
 GameObject:
   m_ObjectHideFlags: 0
@@ -2516,7 +2517,7 @@ MonoBehaviour:
   pathTile: {fileID: 11400000, guid: 3edf053449c20441b98b38255abce4ac, type: 2}
   detailTiles: []
   startPos: {x: 0, y: 0}
-  pathLength: 10
+  pathLength: 200
   turnChance: 0.08
   detailChance: 0
   generateOnStart: 1
