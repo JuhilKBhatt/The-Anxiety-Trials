@@ -238,7 +238,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameOverPanel: {fileID: 101925906}
-  messageText: {fileID: 1724149628}
   restartButton: {fileID: 462616921}
   quitButton: {fileID: 1011622806}
 --- !u!1 &179145964
@@ -1589,7 +1588,7 @@ RectTransform:
   m_GameObject: {fileID: 756029400}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.9, y: 0.9, z: 0.9}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 101925910}
@@ -2517,7 +2516,7 @@ MonoBehaviour:
   pathTile: {fileID: 11400000, guid: 3edf053449c20441b98b38255abce4ac, type: 2}
   detailTiles: []
   startPos: {x: 0, y: 0}
-  pathLength: 150
+  pathLength: 10
   turnChance: 0.08
   detailChance: 0
   generateOnStart: 1
@@ -2896,9 +2895,7 @@ MonoBehaviour:
   inhaleTime: 4
   holdTime: 7
   exhaleTime: 8
-  progressBar: {fileID: 0}
   statusText: {fileID: 1718336856}
-  masteryTime: 20
   debugLogs: 1
 --- !u!114 &1731319064
 MonoBehaviour:
