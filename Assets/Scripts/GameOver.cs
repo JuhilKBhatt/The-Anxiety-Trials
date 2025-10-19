@@ -11,44 +11,37 @@ public class GameOver : MonoBehaviour
 
     private void Start()
     {
-        // Hide panel at start
         if (gameOverPanel != null)
             gameOverPanel.SetActive(false);
 
-        // Assign button listeners
         if (restartButton != null)
             restartButton.onClick.AddListener(RestartGame);
-
         if (quitButton != null)
             quitButton.onClick.AddListener(QuitGame);
     }
 
-    /// <summary>
-    /// Called when the player dies (from PlayerHealthBar event).
-    /// </summary>
     public void ShowGameOver()
     {
         if (gameOverPanel != null)
             gameOverPanel.SetActive(true);
 
-        Time.timeScale = 0f; // Pause the game
-        Debug.Log("Game Over displayed");
+        Time.timeScale = 0f; // pause everything
+        Debug.Log("Game Over triggered!");
     }
 
     public void RestartGame()
     {
-        Time.timeScale = 1f; // Resume time
+        Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void QuitGame()
     {
-        Time.timeScale = 1f; // Resume just in case
-        Debug.Log("Quitting game...");
+        Time.timeScale = 1f;
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false; // Stop play mode in editor
+        UnityEditor.EditorApplication.isPlaying = false;
 #else
-        Application.Quit(); // Quit standalone build
+        Application.Quit();
 #endif
     }
 }
