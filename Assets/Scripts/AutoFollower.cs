@@ -7,12 +7,12 @@ public class AutoFollower : MonoBehaviour
     [SerializeField] private PathGenerator pathGenerator;   // Reference to your PathGenerator
     [SerializeField] private float moveSpeed = 2f;          // Units per second
     [SerializeField] private bool autoFollow = false;       // Toggle ON/OFF
-
     [SerializeField] private Animator animator;
-
 
     private List<Vector3> pathPoints;
     private int currentTargetIndex = 0;
+
+    private SpriteRenderer spriteRenderer;
 
     private void Start()
     {
@@ -24,6 +24,13 @@ public class AutoFollower : MonoBehaviour
         else
         {
             Debug.LogError("AutoFollower: PathGenerator reference not set!");
+        }
+
+        // Cache SpriteRenderer
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        if (spriteRenderer == null)
+        {
+            Debug.LogWarning("AutoFollower: No SpriteRenderer found in children!");
         }
     }
 
@@ -65,11 +72,20 @@ public class AutoFollower : MonoBehaviour
         // Move towards target
         transform.position += direction * moveSpeed * Time.deltaTime;
 
+        // --- Sprite Flipping Logic ---
+        if (spriteRenderer != null)
+        {
+            if (direction.x > 0.05f)
+                spriteRenderer.flipX = false; // Facing right
+            else if (direction.x < -0.05f)
+                spriteRenderer.flipX = true;  // Facing left
+        }
+
         // Update animator
         animator.SetFloat("moveX", direction.x);
         animator.SetFloat("moveY", direction.y);
         animator.SetBool("isMoving", true);
-        animator.SetBool("isRunning", moveSpeed > 2f); // Example: running if speed > 2
+        animator.SetBool("isRunning", moveSpeed > 2f);
 
         // Snap to target if close enough
         if (distance < 0.1f)
