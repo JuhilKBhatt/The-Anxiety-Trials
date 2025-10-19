@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections;
+using System.Collections.Generic;
 
 public class GameOver : MonoBehaviour
 {
@@ -31,7 +33,14 @@ public class GameOver : MonoBehaviour
 
     public void RestartGame()
     {
-        Time.timeScale = 1f;
+        // Make absolutely sure time scale is normal BEFORE loading
+        StartCoroutine(RestartRoutine());
+    }
+
+    private IEnumerator RestartRoutine()
+    {
+        Time.timeScale = 1f; // unpause
+        yield return null;   // wait one frame
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
