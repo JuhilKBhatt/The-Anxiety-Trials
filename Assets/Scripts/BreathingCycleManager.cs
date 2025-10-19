@@ -1,7 +1,6 @@
 using System.Collections;
-using UnityEngine;
-using UnityEngine.UI;
 using System.Collections.Generic;
+using UnityEngine;
 using TMPro;
 
 public class BreathingCycleManager : MonoBehaviour
@@ -28,16 +27,13 @@ public class BreathingCycleManager : MonoBehaviour
     public float HoldTime => holdTime;
     public float ExhaleTime => exhaleTime;
 
-    [Header("Breathing Mastery UI")]
-    [SerializeField] private Slider progressBar;
+    [Header("UI")]
     [SerializeField] private TextMeshProUGUI statusText;
-    [SerializeField] private float masteryTime = 10f;
 
     [Header("Debug")]
     [SerializeField] private bool debugLogs = true;
 
     private TorchVision torch;
-    private float masteryProgress = 0f;
     private bool gameEnded = false;
     private Coroutine breathingRoutine;
     private AudioSource audioSource;
@@ -70,7 +66,6 @@ public class BreathingCycleManager : MonoBehaviour
         }
 
         // Initialize UI
-        if (progressBar != null) progressBar.value = 0f;
         if (statusText != null) statusText.text = "";
 
         // Setup audio
@@ -129,43 +124,10 @@ public class BreathingCycleManager : MonoBehaviour
                 {
                     spiritManager.DamageSpirit(spirit, 0.5f * Time.deltaTime);
                 }
-                masteryProgress += Time.deltaTime;
-            }
-            else
-            {
-                masteryProgress -= Time.deltaTime * 0.25f;
-            }
-
-            masteryProgress = Mathf.Clamp(masteryProgress, 0f, masteryTime);
-
-            if (progressBar != null)
-                progressBar.value = Mathf.Clamp01(masteryProgress / masteryTime);
-
-            if (masteryProgress >= masteryTime)
-            {
-                BreathingMastered();
-                yield break;
             }
 
             yield return null;
         }
-    }
-
-    private void BreathingMastered()
-    {
-        if (gameEnded) return;
-        gameEnded = true;
-
-        if (breathingRoutine != null)
-            StopCoroutine(breathingRoutine);
-
-        playerFollower.StopAutoFollow();
-        StopAudio();
-
-        if (statusText != null)
-            statusText.text = "Breathing Mastered - End of Game";
-
-        Debug.Log("Breathing Mastered! Game stopped.");
     }
 
     // --- AUDIO HELPERS ---

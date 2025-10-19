@@ -2517,7 +2517,7 @@ MonoBehaviour:
   pathTile: {fileID: 11400000, guid: 3edf053449c20441b98b38255abce4ac, type: 2}
   detailTiles: []
   startPos: {x: 0, y: 0}
-  pathLength: 30
+  pathLength: 150
   turnChance: 0.08
   detailChance: 0
   generateOnStart: 1

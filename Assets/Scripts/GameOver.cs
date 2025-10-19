@@ -1,14 +1,12 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;
 using System.Collections;
 
 public class GameOver : MonoBehaviour
 {
     [Header("UI References")]
-    [SerializeField] private GameObject gameOverPanel;  // Panel to show
-    [SerializeField] private TMP_Text messageText;      // Text to display custom message
+    [SerializeField] private GameObject gameOverPanel;  // assign your panel
     [SerializeField] private Button restartButton;
     [SerializeField] private Button quitButton;
 
@@ -23,19 +21,13 @@ public class GameOver : MonoBehaviour
             quitButton.onClick.AddListener(QuitGame);
     }
 
-    /// <summary>
-    /// Show Game Over with a custom message
-    /// </summary>
-    public void ShowGameOver(string message)
+    public void ShowGameOver()
     {
-        if (messageText != null)
-            messageText.text = message;
-
         if (gameOverPanel != null)
             gameOverPanel.SetActive(true);
 
         Time.timeScale = 0f;
-        Debug.Log("💀 Game Over: " + message);
+        Debug.Log("💀 Game Over triggered!");
     }
 
     private void RestartGame()
