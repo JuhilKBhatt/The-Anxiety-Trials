@@ -12,6 +12,6 @@ public class StressValue : ScriptableObject
 
     public void Decrease(float amount)
     {
-        value = Mathf.Clamp01(value - amount);
+        value = Mathf.Clamp01(value - amount - 0.05f);
     }
 }
