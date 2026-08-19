@@ -1,0 +1,14 @@
+{
+ "title": "The Anxiety Trials",
+ "description": "A Unity Engine game for a Univeristy Project",
+ "language": ["C#", "Unity"],
+ "liveDemo": "https://jbhatt.itch.io/the-anxiety-trails",
+ "images": [
+   ""
+ ],
+ "videoDemo": "",
+ "Priority": 2,
+ "type": "Solo",
+ "version": "Beta",
+ "Visibilty": true
+}
