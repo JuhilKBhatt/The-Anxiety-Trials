@@ -4,9 +4,10 @@
  "language": ["C#", "Unity"],
  "liveDemo": "https://jbhatt.itch.io/the-anxiety-trails",
  "images": [
-   ""
+   "https://res.cloudinary.com/dmj4ggkjq/image/upload/v1787106809/The-Anxiety-Trials-img-1_vmgi9d.png",
+  "https://res.cloudinary.com/dmj4ggkjq/image/upload/v1787106696/The-Anxiety-Trials-img-2_mfqc8j.png"
  ],
- "videoDemo": "",
+ "videoDemo": "https://res.cloudinary.com/dmj4ggkjq/video/upload/v1787106879/The-Anxiety-Trials-video-1_r8b1pw.mov",
  "Priority": 2,
  "type": "Solo",
  "version": "Beta",
